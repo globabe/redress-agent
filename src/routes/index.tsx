@@ -186,10 +186,10 @@ function RedressPage() {
       const result = await getVerdict(mandateId);
       const normalized = parseContractJson(result);
       setVerdict({
-        verdict: String(normalized.verdict ?? normalized.result ?? (happyPath ? "FULFILLED" : "BREACH")),
-        remedy: String(normalized.remedy ?? (happyPath ? "NONE" : "EXCHANGE")),
+        verdict: String(normalized["verdict"] ?? normalized["result"] ?? (happyPath ? "FULFILLED" : "BREACH")),
+        remedy: String(normalized["remedy"] ?? (happyPath ? "NONE" : "EXCHANGE")),
         reason: String(
-          normalized.reason ??
+          normalized["reason"] ??
             (happyPath
               ? "Every material requirement in the human's intent was satisfied."
               : "The purchase deviates from the stated color and size requirements."),
