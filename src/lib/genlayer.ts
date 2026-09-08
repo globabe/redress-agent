@@ -58,11 +58,7 @@ async function getWriteClient() {
   });
 }
 
-async function write(
-  functionName: string,
-  args: Array<string | number>,
-  waitForFinality = true,
-) {
+async function write(functionName: string, args: Array<string | number>, waitForFinality = true) {
   const client = await getWriteClient();
   const hash = await client.writeContract({
     address: CONTRACT_ADDRESS,
