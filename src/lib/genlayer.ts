@@ -58,11 +58,7 @@ async function getWriteClient() {
   });
 }
 
-async function write(
-  functionName: string,
-  args: Array<string | number>,
-  waitForFinality = true,
-) {
+async function write(functionName: string, args: Array<string | number>, waitForFinality = true) {
   const client = await getWriteClient();
   const hash = await client.writeContract({
     address: CONTRACT_ADDRESS,
@@ -89,6 +85,9 @@ export async function connectWallet() {
 }
 
 export function parseContractJson(value: unknown) {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    return value as Record<string, unknown>;
+  }
   const text = readValue(value);
   try {
     return JSON.parse(text) as Record<string, unknown>;
