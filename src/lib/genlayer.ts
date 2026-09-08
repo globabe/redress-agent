@@ -85,6 +85,9 @@ export async function connectWallet() {
 }
 
 export function parseContractJson(value: unknown) {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    return value as Record<string, unknown>;
+  }
   const text = readValue(value);
   try {
     return JSON.parse(text) as Record<string, unknown>;
