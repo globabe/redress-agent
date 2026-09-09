@@ -114,7 +114,13 @@ export async function createMandate(
   deadlineDays: number,
   returnDays: number,
 ) {
-  return write("create_mandate", [product, specs, maxPrice, deadlineDays, returnDays]);
+  return write("create_mandate", [
+    product,
+    specs,
+    toContractInt(maxPrice, "Max price"),
+    toContractInt(deadlineDays, "Delivery deadline"),
+    toContractInt(returnDays, "Return window"),
+  ]);
 }
 
 export async function recordPurchase(
