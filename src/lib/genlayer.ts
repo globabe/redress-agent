@@ -135,9 +135,9 @@ export async function recordPurchase(
     mandateId,
     product,
     specs,
-    price,
-    deliveryDays,
-    returnDaysOffered,
+    toContractInt(price, "Price"),
+    toContractInt(deliveryDays, "Delivery days"),
+    toContractInt(returnDaysOffered, "Return window"),
   ]);
 }
 
