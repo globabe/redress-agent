@@ -59,13 +59,7 @@ function Header() {
     <header className="relative mx-auto max-w-5xl px-5 py-6 sm:px-8">
       <nav className="flex items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-3">
-          <img
-            src={logoAsset.url}
-            alt="Redress"
-            width={40}
-            height={40}
-            className="size-10"
-          />
+          <img src={logoAsset.url} alt="Redress" width={40} height={40} className="size-10" />
           <div>
             <p className="font-display text-lg font-semibold leading-none tracking-tight text-foreground">
               Redress
@@ -230,7 +224,9 @@ function WhyGenLayer() {
       <div className="mx-auto max-w-5xl px-5 sm:px-8">
         <div className="grid items-center gap-8 lg:grid-cols-2">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Why GenLayer</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">
+              Why GenLayer
+            </p>
             <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               Judgment, not just computation
             </h2>
@@ -238,8 +234,8 @@ function WhyGenLayer() {
           <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
             Judging whether a purchase &quot;substantially matches&quot; a human&apos;s intent
             isn&apos;t a simple yes/no calculation — it requires interpretation. GenLayer&apos;s
-            validators independently reason over the claim and reach consensus, which is what
-            makes this kind of judgment possible on-chain.
+            validators independently reason over the claim and reach consensus, which is what makes
+            this kind of judgment possible on-chain.
           </p>
         </div>
       </div>
@@ -277,7 +273,9 @@ function Roadmap() {
   return (
     <section className="relative border-t border-border/40 bg-ink-2/40 py-16 sm:py-24">
       <div className="mx-auto max-w-5xl px-5 sm:px-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Roadmap / Vision</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">
+          Roadmap / Vision
+        </p>
         <h2 className="mt-3 max-w-3xl font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           From purchases to any agent transaction
         </h2>
@@ -285,8 +283,8 @@ function Roadmap() {
           Redress starts with purchases. The same accountability question — did the agent act within
           what it was authorized to do — applies anywhere agents transact on a human&apos;s behalf:
           booking travel, hiring contractors, subscribing to services, managing recurring payments.
-          Redress is designed to extend to these cases, and eventually to offer a developer API so any
-          agent platform can integrate accountability without building it themselves.
+          Redress is designed to extend to these cases, and eventually to offer a developer API so
+          any agent platform can integrate accountability without building it themselves.
         </p>
       </div>
     </section>
@@ -299,13 +297,7 @@ function Footer() {
       <div className="mx-auto max-w-5xl px-5 sm:px-8">
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
-            <img
-              src={logoAsset.url}
-              alt="Redress"
-              width={32}
-              height={32}
-              className="size-8"
-            />
+            <img src={logoAsset.url} alt="Redress" width={32} height={32} className="size-8" />
             <div>
               <p className="font-display text-sm font-semibold text-foreground">Redress</p>
               <p className="text-[11px] text-muted-foreground">Built for GenLayer Agent Tank</p>
@@ -313,7 +305,8 @@ function Footer() {
           </div>
           <div className="flex flex-col gap-2 text-xs text-muted-foreground sm:items-end">
             <span>
-              Contract: <span className="font-mono text-foreground/70">CONTRACT_ADDRESS_PLACEHOLDER</span>
+              Contract:{" "}
+              <span className="font-mono text-foreground/70">CONTRACT_ADDRESS_PLACEHOLDER</span>
             </span>
             <a
               href="GITHUB_LINK_PLACEHOLDER"

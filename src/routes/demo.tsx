@@ -249,13 +249,7 @@ function RedressPage() {
       <div className="relative mx-auto max-w-5xl px-5 py-8 sm:px-8 sm:py-10">
         <header className="flex items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-3">
-            <img
-              src={logoAsset.url}
-              alt="Redress"
-              width={40}
-              height={40}
-              className="size-10"
-            />
+            <img src={logoAsset.url} alt="Redress" width={40} height={40} className="size-10" />
             <div>
               <p className="font-display text-lg font-semibold leading-none tracking-tight text-foreground">
                 Redress
