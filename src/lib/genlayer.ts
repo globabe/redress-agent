@@ -58,6 +58,14 @@ async function getWriteClient() {
   });
 }
 
+function toContractInt(value: unknown, label: string): number {
+  const parsed = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(parsed)) {
+    throw new Error(`${label} must be a valid number before it can be sent to the contract.`);
+  }
+  return Math.trunc(parsed);
+}
+
 async function write(functionName: string, args: Array<string | number>, waitForFinality = true) {
   const client = await getWriteClient();
   const hash = await client.writeContract({
