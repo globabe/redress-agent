@@ -25,7 +25,7 @@ import {
   recordPurchase,
 } from "@/lib/genlayer";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/demo")({
   head: () => ({
     meta: [
       { title: "Redress — Intent Adjudication" },
