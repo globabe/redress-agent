@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Check,
   ChevronRight,
@@ -16,6 +16,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import blueShoes from "@/assets/blue-running-shoes.jpg";
+import logoAsset from "@/assets/redress-logo-symbol.png.asset.json";
 import {
   adjudicate,
   connectWallet,
@@ -247,10 +248,14 @@ function RedressPage() {
 
       <div className="relative mx-auto max-w-5xl px-5 py-8 sm:px-8 sm:py-10">
         <header className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="glow-teal grid size-10 place-items-center rounded-xl border border-teal/40 bg-teal/10">
-              <span className="font-display text-xl font-bold leading-none text-teal">R</span>
-            </div>
+          <Link to="/" className="flex items-center gap-3">
+            <img
+              src={logoAsset.url}
+              alt="Redress"
+              width={40}
+              height={40}
+              className="size-10"
+            />
             <div>
               <p className="font-display text-lg font-semibold leading-none tracking-tight text-foreground">
                 Redress
@@ -259,7 +264,7 @@ function RedressPage() {
                 Intent Adjudication Engine
               </p>
             </div>
-          </div>
+          </Link>
           <div className="flex items-center gap-3">
             <div className="hidden items-center gap-2 rounded-full border border-violet/40 bg-violet/10 px-3 py-1.5 sm:flex">
               <span className="animate-glow-pulse size-2 rounded-full bg-violet" />
