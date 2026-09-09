@@ -68,6 +68,13 @@ type Verdict = {
   reason: string;
 };
 
+// Number("") is 0 and Number("abc") is NaN — both would crash the contract's
+// BigInt encoding, so normalize every numeric field to a finite integer.
+function parseNumericField(rawValue: string): number {
+  const parsed = Number(rawValue);
+  return Number.isFinite(parsed) ? Math.trunc(parsed) : 0;
+}
+
 const defaultIntent: Intent = {
   product: "Running shoes",
   color: "black",
@@ -338,7 +345,7 @@ function RedressPage() {
                     type="number"
                     value={intent.maxPrice}
                     onChange={(event) =>
-                      setIntent({ ...intent, maxPrice: Number(event.target.value) })
+                      setIntent({ ...intent, maxPrice: parseNumericField(event.target.value) })
                     }
                   />
                 </Field>
@@ -348,7 +355,10 @@ function RedressPage() {
                     type="number"
                     value={intent.deadlineDays}
                     onChange={(event) =>
-                      setIntent({ ...intent, deadlineDays: Number(event.target.value) })
+                      setIntent({
+                        ...intent,
+                        deadlineDays: parseNumericField(event.target.value),
+                      })
                     }
                   />
                 </Field>
@@ -358,7 +368,7 @@ function RedressPage() {
                     type="number"
                     value={intent.returnDays}
                     onChange={(event) =>
-                      setIntent({ ...intent, returnDays: Number(event.target.value) })
+                      setIntent({ ...intent, returnDays: parseNumericField(event.target.value) })
                     }
                   />
                 </Field>
