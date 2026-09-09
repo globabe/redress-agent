@@ -28,7 +28,7 @@ import {
 export const Route = createFileRoute("/demo")({
   head: () => ({
     meta: [
-      { title: "Redress — Intent Adjudication" },
+      { title: "Redress Demo — Intent Adjudication" },
       {
         name: "description",
         content: "A GenLayer demo that judges whether an AI purchase satisfied human intent.",
