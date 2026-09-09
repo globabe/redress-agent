@@ -228,6 +228,12 @@ function RedressPage() {
     setAgentReady(false);
     setVerdict(null);
     setError("");
+    setIntent(defaultIntent);
+    setRawNumeric({
+      maxPrice: String(defaultIntent.maxPrice),
+      deadlineDays: String(defaultIntent.deadlineDays),
+      returnDays: String(defaultIntent.returnDays),
+    });
     setStep(1);
   }
 
