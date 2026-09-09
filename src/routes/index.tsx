@@ -354,32 +354,53 @@ function RedressPage() {
                   <input
                     aria-label="Max price"
                     type="number"
-                    value={intent.maxPrice}
-                    onChange={(event) =>
-                      setIntent({ ...intent, maxPrice: parseNumericField(event.target.value) })
+                    value={rawNumeric.maxPrice}
+                    onChange={(event) => {
+                      const raw = event.target.value;
+                      setRawNumeric({ ...rawNumeric, maxPrice: raw });
+                      setIntent({ ...intent, maxPrice: parseNumericField(raw) });
+                    }}
+                    onBlur={() =>
+                      setRawNumeric((prev) => ({
+                        ...prev,
+                        maxPrice: String(parseNumericField(prev.maxPrice)),
+                      }))
                     }
                   />
                 </Field>
-                <Field label="Deadline d">
+                <Field label="Deadline (days)">
                   <input
                     aria-label="Delivery deadline"
                     type="number"
-                    value={intent.deadlineDays}
-                    onChange={(event) =>
-                      setIntent({
-                        ...intent,
-                        deadlineDays: parseNumericField(event.target.value),
-                      })
+                    value={rawNumeric.deadlineDays}
+                    onChange={(event) => {
+                      const raw = event.target.value;
+                      setRawNumeric({ ...rawNumeric, deadlineDays: raw });
+                      setIntent({ ...intent, deadlineDays: parseNumericField(raw) });
+                    }}
+                    onBlur={() =>
+                      setRawNumeric((prev) => ({
+                        ...prev,
+                        deadlineDays: String(parseNumericField(prev.deadlineDays)),
+                      }))
                     }
                   />
                 </Field>
-                <Field label="Return d">
+                <Field label="Return window (days)">
                   <input
                     aria-label="Return window"
                     type="number"
-                    value={intent.returnDays}
-                    onChange={(event) =>
-                      setIntent({ ...intent, returnDays: parseNumericField(event.target.value) })
+                    value={rawNumeric.returnDays}
+                    onChange={(event) => {
+                      const raw = event.target.value;
+                      setRawNumeric({ ...rawNumeric, returnDays: raw });
+                      setIntent({ ...intent, returnDays: parseNumericField(raw) });
+                    }}
+                    onBlur={() =>
+                      setRawNumeric((prev) => ({
+                        ...prev,
+                        returnDays: String(parseNumericField(prev.returnDays)),
+                      }))
                     }
                   />
                 </Field>
