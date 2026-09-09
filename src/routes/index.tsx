@@ -338,7 +338,7 @@ function RedressPage() {
                     type="number"
                     value={intent.maxPrice}
                     onChange={(event) =>
-                      setIntent({ ...intent, maxPrice: Number(event.target.value) })
+                      setIntent({ ...intent, maxPrice: parseNumericField(event.target.value) })
                     }
                   />
                 </Field>
@@ -348,7 +348,10 @@ function RedressPage() {
                     type="number"
                     value={intent.deadlineDays}
                     onChange={(event) =>
-                      setIntent({ ...intent, deadlineDays: Number(event.target.value) })
+                      setIntent({
+                        ...intent,
+                        deadlineDays: parseNumericField(event.target.value),
+                      })
                     }
                   />
                 </Field>
@@ -358,7 +361,7 @@ function RedressPage() {
                     type="number"
                     value={intent.returnDays}
                     onChange={(event) =>
-                      setIntent({ ...intent, returnDays: Number(event.target.value) })
+                      setIntent({ ...intent, returnDays: parseNumericField(event.target.value) })
                     }
                   />
                 </Field>
