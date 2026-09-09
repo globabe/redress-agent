@@ -68,10 +68,13 @@ function toContractInt(value: unknown, label: string): number {
 
 async function write(functionName: string, args: Array<string | number>, waitForFinality = true) {
   const client = await getWriteClient();
+  const safeArgs = args.map((arg) =>
+    typeof arg === "number" ? toContractInt(arg, `${functionName} argument`) : arg,
+  );
   const hash = await client.writeContract({
     address: CONTRACT_ADDRESS,
     functionName,
-    args,
+    args: safeArgs,
     value: 0n,
   });
 
