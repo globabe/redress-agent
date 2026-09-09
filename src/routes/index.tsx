@@ -104,6 +104,11 @@ const steps = ["Intent", "Purchase", "Adjudicate", "Outcome"];
 
 function RedressPage() {
   const [intent, setIntent] = useState(defaultIntent);
+  const [rawNumeric, setRawNumeric] = useState({
+    maxPrice: String(defaultIntent.maxPrice),
+    deadlineDays: String(defaultIntent.deadlineDays),
+    returnDays: String(defaultIntent.returnDays),
+  });
   const [step, setStep] = useState(1);
   const [mandateId, setMandateId] = useState("");
   const [purchaseRecorded, setPurchaseRecorded] = useState(false);
