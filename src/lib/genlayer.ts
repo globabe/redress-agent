@@ -7,8 +7,10 @@ const CONTRACT_ADDRESS = "0x562BbB4B400124904bDd18B337844f87e269B7c2" as `0x${st
 // Studio Next uses the same consensus contracts as Studionet, but exposes a
 // separate RPC and chain ID. Keep the SDK's consensus configuration attached
 // so writeContract can submit through the wallet.
+const { blockExplorers: _blockExplorers, ...studionetWithoutExplorer } = studionet;
+
 const studioNext = {
-  ...studionet,
+  ...studionetWithoutExplorer,
   id: 61997,
   name: "GenLayer Studio Next",
   rpcUrls: { default: { http: ["https://studio-next.genlayer.com/api"] } },
