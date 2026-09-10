@@ -88,10 +88,35 @@ async function write(functionName: string, args: Array<string | number>, waitFor
   if (!waitForFinality) return String(hash);
   const receipt = await client.waitForTransactionReceipt({
     hash,
-    status: TransactionStatus.FINALIZED,
+    // ACCEPTED also resolves terminal states such as CANCELED and timeout
+    // statuses, so failed consensus transactions do not leave the UI polling.
+    status: TransactionStatus.ACCEPTED,
     interval: 2000,
     retries: 90,
+    fullTransaction: true,
   });
+
+  const receiptRecord = receipt as Record<string, unknown>;
+  const statusName = String(receiptRecord.statusName ?? "");
+  const terminalFailureStatuses = new Set([
+    "CANCELED",
+    "UNDETERMINED",
+    "LEADER_TIMEOUT",
+    "VALIDATORS_TIMEOUT",
+  ]);
+  if (terminalFailureStatuses.has(statusName)) {
+    throw new Error(`The GenLayer transaction ended with status ${statusName}. Please retry.`);
+  }
+
+  if (receiptRecord.txExecutionResultName === "FINISHED_WITH_ERROR") {
+    const reason = readValue(receiptRecord.genvmLog) || readValue(receiptRecord.stderr);
+    throw new Error(
+      reason
+        ? `The contract rejected the transaction: ${reason}`
+        : "The contract rejected the transaction. Please review the intent and retry.",
+    );
+  }
+
   const result = readValue(receipt);
   return result || String(hash);
 }
