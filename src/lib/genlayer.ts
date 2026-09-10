@@ -1,9 +1,14 @@
-import { createClient, type abi } from "genlayer-js";
+import { createClient } from "genlayer-js";
+import { studionet } from "genlayer-js/chains";
 import { TransactionStatus } from "genlayer-js/types";
 
 const CONTRACT_ADDRESS = "0x562BbB4B400124904bDd18B337844f87e269B7c2" as `0x${string}`;
 
+// Studio Next uses the same consensus contracts as Studionet, but exposes a
+// separate RPC and chain ID. Keep the SDK's consensus configuration attached
+// so writeContract can submit through the wallet.
 const studioNext = {
+  ...studionet,
   id: 61997,
   name: "GenLayer Studio Next",
   rpcUrls: { default: { http: ["https://studio-next.genlayer.com/api"] } },
@@ -93,6 +98,14 @@ export async function connectWallet() {
   const provider = getProvider();
   const accounts = (await provider.request({ method: "eth_requestAccounts" })) as string[];
   return accounts[0] ?? "";
+}
+
+export async function disconnectWallet() {
+  const provider = getProvider();
+  await provider.request({
+    method: "wallet_revokePermissions",
+    params: [{ eth_accounts: {} }],
+  });
 }
 
 export function parseContractJson(value: unknown) {

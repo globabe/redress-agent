@@ -1,4 +1,5 @@
 - [x] Build the Redress four-step wizard UI and dark design system
 - [x] Wire GenLayer read/write contract helpers with wallet error handling
 - [x] Add route metadata and validate the live preview
-- [ ] Build a static Redress landing page using the uploaded logo and brand copy
+- [x] Build a static Redress landing page using the uploaded logo and brand copy
+- [x] Fix Studio Next wallet writes and add in-app wallet disconnect

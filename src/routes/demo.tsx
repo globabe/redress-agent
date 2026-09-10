@@ -7,6 +7,7 @@ import {
   ExternalLink,
   LoaderCircle,
   LockKeyhole,
+  LogOut,
   RefreshCcw,
   ShieldCheck,
   Sparkles,
@@ -21,6 +22,7 @@ import {
   adjudicate,
   connectWallet,
   createMandate,
+  disconnectWallet,
   getVerdict,
   parseContractJson,
   recordPurchase,
@@ -151,6 +153,19 @@ function RedressPage() {
     }
   }
 
+  async function handleDisconnect() {
+    setBusy("wallet");
+    setError("");
+    try {
+      await disconnectWallet();
+      setWalletAddress("");
+    } catch (caught) {
+      showError(caught);
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function handleCreateMandate() {
     setBusy("mandate");
     setError("");
@@ -264,20 +279,33 @@ function RedressPage() {
               <span className="animate-glow-pulse size-2 rounded-full bg-violet" />
               <span className="text-xs font-medium text-violet">GenLayer Studio Next</span>
             </div>
-            <Button
-              variant="default"
-              onClick={handleConnect}
-              disabled={busy === "wallet"}
-              className="h-9 rounded-lg bg-teal px-3 text-xs font-semibold text-ink shadow-none hover:bg-teal/90 sm:px-4 sm:text-sm"
-            >
-              {busy === "wallet" ? <LoaderCircle className="animate-spin" /> : <Wallet />}
-              <span className="hidden sm:inline">
-                {walletAddress
-                  ? `${walletAddress.slice(0, 6)}…${walletAddress.slice(-4)}`
-                  : "Connect Wallet"}
-              </span>
-              <span className="sm:hidden">{walletAddress ? "Connected" : "Connect"}</span>
-            </Button>
+            {walletAddress ? (
+              <div className="flex items-center gap-2">
+                <span className="hidden text-xs font-medium text-teal sm:inline">
+                  {walletAddress.slice(0, 6)}…{walletAddress.slice(-4)}
+                </span>
+                <Button
+                  variant="outline"
+                  onClick={handleDisconnect}
+                  disabled={busy === "wallet"}
+                  className="h-9 rounded-lg border-teal/40 bg-teal/10 px-3 text-xs font-semibold text-teal shadow-none hover:bg-teal/20 hover:text-teal sm:px-4 sm:text-sm"
+                >
+                  {busy === "wallet" ? <LoaderCircle className="animate-spin" /> : <LogOut />}
+                  <span>Disconnect</span>
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="default"
+                onClick={handleConnect}
+                disabled={busy === "wallet"}
+                className="h-9 rounded-lg bg-teal px-3 text-xs font-semibold text-ink shadow-none hover:bg-teal/90 sm:px-4 sm:text-sm"
+              >
+                {busy === "wallet" ? <LoaderCircle className="animate-spin" /> : <Wallet />}
+                <span className="hidden sm:inline">Connect Wallet</span>
+                <span className="sm:hidden">Connect</span>
+              </Button>
+            )}
           </div>
         </header>
 
