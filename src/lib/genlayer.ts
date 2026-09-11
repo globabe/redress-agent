@@ -73,7 +73,7 @@ function toContractInt(value: unknown, label: string): number {
   return Math.trunc(parsed);
 }
 
-async function write(functionName: string, args: Array<string | number>, waitForFinality = true) {
+async function write(functionName: string, args: Array<string | number>, waitForReceipt = true) {
   const client = await getWriteClient();
   const safeArgs = args.map((arg) =>
     typeof arg === "number" ? toContractInt(arg, `${functionName} argument`) : arg,
@@ -85,7 +85,7 @@ async function write(functionName: string, args: Array<string | number>, waitFor
     value: 0n,
   });
 
-  if (!waitForFinality) return String(hash);
+  if (!waitForReceipt) return String(hash);
   const receipt = await client.waitForTransactionReceipt({
     hash,
     // ACCEPTED also resolves terminal states such as CANCELED and timeout
@@ -93,11 +93,10 @@ async function write(functionName: string, args: Array<string | number>, waitFor
     status: TransactionStatus.ACCEPTED,
     interval: 2000,
     retries: 90,
-    fullTransaction: true,
   });
 
   const receiptRecord = receipt as Record<string, unknown>;
-  const statusName = String(receiptRecord.statusName ?? "");
+  const statusName = String(receiptRecord["statusName"] ?? "");
   const terminalFailureStatuses = new Set([
     "CANCELED",
     "UNDETERMINED",
@@ -108,8 +107,8 @@ async function write(functionName: string, args: Array<string | number>, waitFor
     throw new Error(`The GenLayer transaction ended with status ${statusName}. Please retry.`);
   }
 
-  if (receiptRecord.txExecutionResultName === "FINISHED_WITH_ERROR") {
-    const reason = readValue(receiptRecord.genvmLog) || readValue(receiptRecord.stderr);
+  if (receiptRecord["txExecutionResultName"] === "FINISHED_WITH_ERROR") {
+    const reason = readValue(receiptRecord["genvmLog"]) || readValue(receiptRecord["stderr"]);
     throw new Error(
       reason
         ? `The contract rejected the transaction: ${reason}`
