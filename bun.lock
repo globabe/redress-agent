@@ -42,7 +42,7 @@
         "cmdk": "^1.1.1",
         "date-fns": "^4.1.0",
         "embla-carousel-react": "^8.6.0",
-        "genlayer-js": "^1.1.8",
+        "genlayer-js": "2.0.0-rc.1",
         "input-otp": "^1.4.2",
         "lucide-react": "^0.575.0",
         "react": "^19.2.0",
@@ -772,7 +772,7 @@
 
     "generator-function": ["generator-function@2.0.1", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/generator-function/-/generator-function-2.0.1.tgz", {}, "sha512-SFdFmIJi+ybC0vjlHN0ZGVGHc3lgE0DxPAT0djjVg+kjOnSqclqmj0KQ7ykTOLP6YxoqOvuAODGdcHJn+43q3g=="],
 
-    "genlayer-js": ["genlayer-js@1.1.8", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/genlayer-js/-/genlayer-js-1.1.8.tgz", { "dependencies": { "eslint-plugin-import": "^2.30.0", "typescript-parsec": "^0.3.4", "viem": "^2.29.0" } }, "sha512-qlqh8oqR9Ad7FVbIdqIrHfsMPLLJ24ZRHUZ2LGMpw6DX5ySjrEWdV1X93bVIHO44cu9CLGdx8m2ubkPv78/RLg=="],
+    "genlayer-js": ["genlayer-js@2.0.0-rc.1", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/genlayer-js/-/genlayer-js-2.0.0-rc.1.tgz", { "dependencies": { "eslint-plugin-import": "^2.30.0", "typescript-parsec": "^0.3.4", "viem": "^2.29.0" } }, "sha512-zvY8ofpl478VC9K7pMhiOm+OpkNVXfmZ17C44s289Ii90fXdNMdqpv3izGIapWgpZEMHoLoDYt1KCDDHC6VfQg=="],
 
     "gensync": ["gensync@1.0.0-beta.2", "", {}, "sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg=="],
 
