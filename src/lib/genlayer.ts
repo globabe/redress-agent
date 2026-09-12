@@ -169,7 +169,6 @@ function extractReturnValue(receipt: Record<string, unknown>): string {
   return "";
 }
 
-
 export async function connectWallet() {
   const provider = getProvider();
   const accounts = (await provider.request({ method: "eth_requestAccounts" })) as string[];
