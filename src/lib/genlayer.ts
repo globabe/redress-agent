@@ -145,11 +145,30 @@ function extractReturnValue(receipt: Record<string, unknown>): string {
     if (resultRecord["status"] && resultRecord["status"] !== "return") continue;
     const payload = resultRecord["payload"];
     if (!payload || typeof payload !== "object") continue;
-    const readable = (payload as Record<string, unknown>)["readable"];
-    if (typeof readable === "string" && readable) return readable;
+    const payloadRecord = payload as Record<string, unknown>;
+
+    // payload.readable is a display rendering: a returned string arrives quoted
+    // (e.g. "\"m-1\""), which the contract then can't look up. Decode the raw
+    // calldata bytes to recover the exact value the contract returned.
+    const raw = payloadRecord["raw"];
+    if (Array.isArray(raw)) {
+      try {
+        const decoded = abi.calldata.decode(new Uint8Array(raw as number[]));
+        if (typeof decoded === "string" && decoded) return decoded;
+        if (typeof decoded === "number" || typeof decoded === "bigint") return String(decoded);
+      } catch {
+        // fall through to the readable rendering below
+      }
+    }
+
+    const readable = payloadRecord["readable"];
+    if (typeof readable === "string" && readable) {
+      return readable.replace(/^["']|["']$/g, "");
+    }
   }
   return "";
 }
+
 
 export async function connectWallet() {
   const provider = getProvider();
