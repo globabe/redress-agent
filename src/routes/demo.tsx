@@ -633,8 +633,8 @@ function RedressPage() {
                 </div>
               </div>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                Every submitted specification, price limit, delivery deadline, and return term
-                will be preserved.
+                Every submitted specification, price limit, delivery deadline, and return term will
+                be preserved.
               </p>
             </div>
             <Button
