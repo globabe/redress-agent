@@ -91,7 +91,11 @@ const shoeTypes = ["Running shoes", "High heels", "Boots", "Sandals", "Sneakers"
 const alternativeColors = ["black", "blue", "red", "white", "green"];
 
 function randomItem<T>(items: T[]): T {
-  return items[Math.floor(Math.random() * items.length)] ?? items[0];
+  const selected = items[Math.floor(Math.random() * items.length)];
+  if (selected === undefined) {
+    throw new Error("A simulated purchase option could not be selected.");
+  }
+  return selected;
 }
 
 function createSimulatedPurchase(intent: Intent, forceMatch: boolean): Purchase {
