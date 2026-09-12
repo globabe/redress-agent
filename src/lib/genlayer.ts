@@ -4,6 +4,8 @@ import { TransactionStatus } from "genlayer-js/types";
 
 const CONTRACT_ADDRESS = "0x562BbB4B400124904bDd18B337844f87e269B7c2" as `0x${string}`;
 
+const studioDevnetChain = studioDevnet as Parameters<typeof createClient>[0]["chain"];
+
 type EthereumProvider = {
   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
 };
@@ -36,7 +38,7 @@ function readValue(value: unknown): string {
 }
 
 export function getReadClient() {
-  return createClient({ chain: studioDevnet });
+  return createClient({ chain: studioDevnetChain });
 }
 
 async function getWriteClient() {
@@ -46,7 +48,7 @@ async function getWriteClient() {
   if (!account) throw new Error("No wallet account was selected.");
 
   return createClient({
-    chain: studioDevnet,
+    chain: studioDevnetChain,
     account: account as `0x${string}`,
     provider,
   });
