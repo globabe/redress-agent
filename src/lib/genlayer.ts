@@ -124,8 +124,31 @@ async function write(functionName: string, args: Array<string | number>, waitFor
     );
   }
 
-  const result = readValue(receipt);
+  const result = extractReturnValue(receiptRecord);
   return result || String(hash);
+}
+
+// The contract's return value is nested inside the consensus receipt:
+// consensus_data.leader_receipt[0].result.payload.readable. A shallow scan of
+// top-level receipt fields picks up the transaction's input "data" instead,
+// which made record_purchase run against a mandate ID that never existed.
+function extractReturnValue(receipt: Record<string, unknown>): string {
+  const consensus = receipt["consensus_data"];
+  if (!consensus || typeof consensus !== "object") return "";
+  const leaders = (consensus as Record<string, unknown>)["leader_receipt"];
+  const entries = Array.isArray(leaders) ? leaders : leaders ? [leaders] : [];
+  for (const entry of entries) {
+    if (!entry || typeof entry !== "object") continue;
+    const result = (entry as Record<string, unknown>)["result"];
+    if (!result || typeof result !== "object") continue;
+    const resultRecord = result as Record<string, unknown>;
+    if (resultRecord["status"] && resultRecord["status"] !== "return") continue;
+    const payload = resultRecord["payload"];
+    if (!payload || typeof payload !== "object") continue;
+    const readable = (payload as Record<string, unknown>)["readable"];
+    if (typeof readable === "string" && readable) return readable;
+  }
+  return "";
 }
 
 export async function connectWallet() {
