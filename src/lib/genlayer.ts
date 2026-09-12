@@ -1,21 +1,8 @@
-import { createClient } from "genlayer-js";
-import { studionet } from "genlayer-js/chains";
+import { createClient, isSuccessful } from "genlayer-js";
+import { studioDevnet } from "genlayer-js/chains";
 import { TransactionStatus } from "genlayer-js/types";
 
 const CONTRACT_ADDRESS = "0x562BbB4B400124904bDd18B337844f87e269B7c2" as `0x${string}`;
-
-// Studio Next uses the same consensus contracts as Studionet, but exposes a
-// separate RPC and chain ID. Keep the SDK's consensus configuration attached
-// so writeContract can submit through the wallet.
-const { blockExplorers: _blockExplorers, ...studionetWithoutExplorer } = studionet;
-
-const studioNext = {
-  ...studionetWithoutExplorer,
-  id: 61997,
-  name: "GenLayer Studio Next",
-  rpcUrls: { default: { http: ["https://studio-next.genlayer.com/api"] } },
-  nativeCurrency: { name: "GEN", symbol: "GEN", decimals: 18 },
-} as const;
 
 type EthereumProvider = {
   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
@@ -49,7 +36,7 @@ function readValue(value: unknown): string {
 }
 
 export function getReadClient() {
-  return createClient({ chain: studioNext });
+  return createClient({ chain: studioDevnet });
 }
 
 async function getWriteClient() {
@@ -59,7 +46,7 @@ async function getWriteClient() {
   if (!account) throw new Error("No wallet account was selected.");
 
   return createClient({
-    chain: studioNext,
+    chain: studioDevnet,
     account: account as `0x${string}`,
     provider,
   });
@@ -78,11 +65,25 @@ async function write(functionName: string, args: Array<string | number>, waitFor
   const safeArgs = args.map((arg) =>
     typeof arg === "number" ? toContractInt(arg, `${functionName} argument`) : arg,
   );
+  const estimate = await client.estimateTransactionFeesForWrite({
+    address: CONTRACT_ADDRESS,
+    functionName,
+    args: safeArgs,
+    value: 0n,
+  });
+  const fees = {
+    distribution: estimate.distribution,
+    feeValue: estimate.feeValue,
+    ...(estimate.messageAllocations
+      ? { messageAllocations: estimate.messageAllocations }
+      : {}),
+  };
   const hash = await client.writeContract({
     address: CONTRACT_ADDRESS,
     functionName,
     args: safeArgs,
     value: 0n,
+    fees,
   });
 
   if (!waitForReceipt) return String(hash);
@@ -113,6 +114,12 @@ async function write(functionName: string, args: Array<string | number>, waitFor
       reason
         ? `The contract rejected the transaction: ${reason}`
         : "The contract rejected the transaction. Please review the intent and retry.",
+    );
+  }
+
+  if (!isSuccessful(receipt)) {
+    throw new Error(
+      `The GenLayer transaction did not complete successfully (status: ${statusName || "unknown"}, execution: ${String(receiptRecord["txExecutionResultName"] ?? "unknown")}). Please retry.`,
     );
   }
 
