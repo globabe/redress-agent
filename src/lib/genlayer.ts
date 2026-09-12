@@ -4,7 +4,8 @@ import { TransactionStatus } from "genlayer-js/types";
 
 const CONTRACT_ADDRESS = "0x562BbB4B400124904bDd18B337844f87e269B7c2" as `0x${string}`;
 
-const studioDevnetChain = studioDevnet as Parameters<typeof createClient>[0]["chain"];
+type ClientChain = NonNullable<NonNullable<Parameters<typeof createClient>[0]>["chain"]>;
+const studioDevnetChain = studioDevnet as unknown as ClientChain;
 
 type EthereumProvider = {
   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
