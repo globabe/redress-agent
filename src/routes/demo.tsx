@@ -99,13 +99,12 @@ function randomItem<T>(items: T[]): T {
 }
 
 function createSimulatedPurchase(intent: Intent, forceMatch: boolean): Purchase {
-  const mismatch = forceMatch
+  const shouldFullyMatch = forceMatch || Math.random() < 0.2;
+  const mismatch = shouldFullyMatch
     ? [false, false, false, false, false]
-    : Math.random() < 0.2
-      ? [false, false, false, false, false]
-      : Array.from({ length: 5 }, () => Math.random() < 0.4);
+    : Array.from({ length: 5 }, () => Math.random() < 0.4);
 
-  if (!forceMatch && !mismatch.some(Boolean)) {
+  if (!shouldFullyMatch && !mismatch.some(Boolean)) {
     mismatch[Math.floor(Math.random() * mismatch.length)] = true;
   }
 
@@ -113,7 +112,9 @@ function createSimulatedPurchase(intent: Intent, forceMatch: boolean): Purchase 
     (color) => color.toLowerCase() !== intent.color.toLowerCase(),
   );
   const numericSize = Number(intent.size);
-  const alternateSize = Number.isFinite(numericSize) ? String(numericSize + 1) : `${intent.size} wide`;
+  const alternateSize = Number.isFinite(numericSize)
+    ? String(numericSize + 1)
+    : `${intent.size} wide`;
 
   return {
     color: mismatch[0] ? randomItem(colors) : intent.color,
@@ -539,10 +540,16 @@ function RedressPage() {
             {agentReady && purchase ? (
               <div className="mt-4 grid items-stretch gap-3 sm:grid-cols-5">
                 <div className="relative overflow-hidden rounded-xl border border-violet/30 bg-ink/60 p-4 sm:col-span-2">
-                  <div className="grid aspect-square w-full place-items-center rounded-lg border border-violet/20 bg-secondary/60" role="img" aria-label="Generic shoe placeholder">
+                  <div
+                    className="grid aspect-square w-full place-items-center rounded-lg border border-violet/20 bg-secondary/60"
+                    role="img"
+                    aria-label="Generic shoe placeholder"
+                  >
                     <Footprints className="size-20 text-violet/70" strokeWidth={1.25} />
                   </div>
-                  <p className="mt-3 font-display font-semibold text-foreground">{intent.product}</p>
+                  <p className="mt-3 font-display font-semibold text-foreground">
+                    {intent.product}
+                  </p>
                   <p className="text-sm text-muted-foreground">Meridian Trail Series</p>
                   <p className="mt-2 font-display text-2xl font-bold text-foreground">
                     ${purchase.price}
@@ -586,7 +593,9 @@ function RedressPage() {
             {purchase ? (
               <ComparisonTable intent={intent} purchase={purchase} />
             ) : (
-              <p className="mt-5 text-sm text-muted-foreground">Complete the purchase step to compare the result.</p>
+              <p className="mt-5 text-sm text-muted-foreground">
+                Complete the purchase step to compare the result.
+              </p>
             )}
             {verdict && <VerdictCard verdict={verdict} />}
             <Button
@@ -623,12 +632,10 @@ function RedressPage() {
                   <p className="font-display text-xl font-semibold text-foreground">NONE</p>
                 </div>
               </div>
-              <div className="mt-4 space-y-2 text-sm">
-                <OutcomeRow label="Color" value="black" />
-                <OutcomeRow label="Size" value="42" />
-                <OutcomeRow label="Price" value="$140" />
-                <OutcomeRow label="Delivery" value="4 days" />
-              </div>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                Every submitted specification, price limit, delivery deadline, and return term
+                will be preserved.
+              </p>
             </div>
             <Button
               onClick={() => restart(true)}
@@ -805,18 +812,6 @@ function VerdictCard({ verdict }: { verdict: Verdict }) {
       <blockquote className="mt-4 border-l-2 border-current pl-4 text-sm leading-relaxed text-muted-foreground">
         &quot;{verdict.reason}&quot;
       </blockquote>
-    </div>
-  );
-}
-
-function OutcomeRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="inline-flex items-center gap-1.5 font-medium text-emerald">
-        {value}
-        <Check className="size-3" />
-      </span>
     </div>
   );
 }
