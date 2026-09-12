@@ -5,7 +5,6 @@ import {
   ChevronRight,
   CircleAlert,
   ExternalLink,
-  Footprints,
   LoaderCircle,
   LockKeyhole,
   LogOut,
@@ -58,6 +57,7 @@ type Intent = {
 };
 
 type Purchase = {
+  product: string;
   color: string;
   size: string;
   price: number;
@@ -117,6 +117,7 @@ function createSimulatedPurchase(intent: Intent, forceMatch: boolean): Purchase 
     : `${intent.size} wide`;
 
   return {
+    product: intent.product,
     color: mismatch[0] ? randomItem(colors) : intent.color,
     size: mismatch[1] ? alternateSize : intent.size,
     price: mismatch[2]
@@ -133,6 +134,7 @@ function createSimulatedPurchase(intent: Intent, forceMatch: boolean): Purchase 
 
 function purchaseFulfillsIntent(purchase: Purchase, intent: Intent) {
   return (
+    purchase.product === intent.product &&
     purchase.color.toLowerCase() === intent.color.toLowerCase() &&
     purchase.size === intent.size &&
     purchase.price <= intent.maxPrice &&
@@ -251,7 +253,7 @@ function RedressPage() {
     try {
       await recordPurchase(
         mandateId,
-        intent.product,
+        purchase.product,
         purchaseSpecs,
         purchase.price,
         purchase.deliveryDays,
@@ -543,12 +545,12 @@ function RedressPage() {
                   <div
                     className="grid aspect-square w-full place-items-center rounded-lg border border-violet/20 bg-secondary/60"
                     role="img"
-                    aria-label="Generic shoe placeholder"
+                    aria-label={`${purchase.color} ${purchase.product}`}
                   >
-                    <Footprints className="size-20 text-violet/70" strokeWidth={1.25} />
+                    <ShoeIcon product={purchase.product} color={purchase.color} />
                   </div>
                   <p className="mt-3 font-display font-semibold text-foreground">
-                    {intent.product}
+                    {purchase.product}
                   </p>
                   <p className="text-sm text-muted-foreground">Meridian Trail Series</p>
                   <p className="mt-2 font-display text-2xl font-bold text-foreground">
@@ -708,8 +710,144 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+const shoeColorMap: Record<string, string> = {
+  black: "#171A1F",
+  white: "#F4F7F6",
+  blue: "#2563EB",
+  navy: "#1E3A8A",
+  red: "#DC2626",
+  brown: "#8B5E3C",
+  green: "#16A34A",
+  gray: "#6B7280",
+  grey: "#6B7280",
+  beige: "#D6C6A5",
+  tan: "#C49A6C",
+  pink: "#EC4899",
+  purple: "#9333EA",
+  orange: "#EA580C",
+  yellow: "#EAB308",
+};
+
+function resolveShoeColor(color: string) {
+  const normalized = color.trim().toLowerCase();
+  const exact = shoeColorMap[normalized];
+  if (exact) return exact;
+
+  const matchingName = Object.keys(shoeColorMap).find((name) => normalized.includes(name));
+  return matchingName ? shoeColorMap[matchingName] : "#00E5B8";
+}
+
+function ShoeIcon({ product, color }: { product: string; color: string }) {
+  const fill = resolveShoeColor(color);
+  const commonProps = {
+    fill,
+    stroke: "currentColor",
+    strokeWidth: 2.5,
+    strokeLinejoin: "round" as const,
+  };
+
+  return (
+    <svg
+      viewBox="0 0 180 120"
+      className="h-auto w-[82%] text-foreground"
+      aria-hidden="true"
+      data-shoe-type={product}
+      data-shoe-color={color.toLowerCase()}
+    >
+      {product === "High heels" && (
+        <>
+          <path
+            {...commonProps}
+            d="M24 31h45c8 0 14 5 16 13l7 28c15 4 33 6 58 7 7 0 12 5 12 12H45c-13 0-22-8-22-20l1-40Z"
+          />
+          <path {...commonProps} d="M95 88h17l-5 25H96Z" />
+          <path
+            d="M32 45h50M47 91h112"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+        </>
+      )}
+      {product === "Boots" && (
+        <>
+          <path
+            {...commonProps}
+            d="M37 14h62l-4 60c15 7 31 11 51 12 10 1 16 7 16 17H34c-10 0-17-7-17-16 0-8 6-14 17-16Z"
+          />
+          <path
+            d="M38 28h58M35 77h63M22 103h138"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+        </>
+      )}
+      {product === "Sandals" && (
+        <>
+          <path
+            {...commonProps}
+            d="M19 83c3-13 15-20 34-20h44c16 0 29 5 40 14l24 19c-3 8-10 12-21 12H39c-14 0-22-8-20-25Z"
+          />
+          <path
+            {...commonProps}
+            d="M57 65c4-25 17-39 36-43l10 8c-15 8-24 20-27 35ZM95 65c8-18 20-27 36-29l8 10c-10 4-17 11-22 21Z"
+          />
+          <path
+            d="M25 94h129"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+        </>
+      )}
+      {product === "Sneakers" && (
+        <>
+          <path
+            {...commonProps}
+            d="M18 69c3-9 9-17 18-24l15-13 25 27c19 7 43 12 71 15 10 1 16 8 16 18H36c-15 0-22-8-18-23Z"
+          />
+          <path
+            d="M58 48 47 58m23-1L58 67m23-1L70 75m-45 17h135"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+        </>
+      )}
+      {(product === "Running shoes" || !shoeTypes.includes(product)) && (
+        <>
+          <path
+            {...commonProps}
+            d="M14 74c5-13 15-24 30-34l15-10 19 28c22 7 47 11 73 13 10 1 16 8 15 18l-1 7H34c-17 0-24-8-20-22Z"
+          />
+          <path
+            d="m53 47-13 13m27-3L54 70m29-4L68 80m-48 16h142"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+          <path
+            d="m118 72 12 16 16-14"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+        </>
+      )}
+    </svg>
+  );
+}
+
 function PurchaseRows({ purchase, intent }: { purchase: Purchase; intent: Intent }) {
   const rows = [
+    ["Product", purchase.product, purchase.product === intent.product],
     ["Color", purchase.color, purchase.color === intent.color],
     ["Size", purchase.size, purchase.size === intent.size],
     ["Price", `$${purchase.price}`, purchase.price <= intent.maxPrice],
@@ -738,7 +876,7 @@ function PurchaseRows({ purchase, intent }: { purchase: Purchase; intent: Intent
 
 function ComparisonTable({ intent, purchase }: { intent: Intent; purchase: Purchase }) {
   const rows = [
-    ["Product", intent.product, intent.product, true],
+    ["Product", intent.product, purchase.product, intent.product === purchase.product],
     ["Color", intent.color, purchase.color, intent.color === purchase.color],
     ["Size", intent.size, purchase.size, intent.size === purchase.size],
     ["Price", `≤ $${intent.maxPrice}`, `$${purchase.price}`, purchase.price <= intent.maxPrice],
