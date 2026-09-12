@@ -1,4 +1,4 @@
-import { createClient, isSuccessful } from "genlayer-js";
+import { abi, createClient, isSuccessful } from "genlayer-js";
 import { studioDevnet } from "genlayer-js/chains";
 import { TransactionStatus } from "genlayer-js/types";
 
