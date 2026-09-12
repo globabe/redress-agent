@@ -306,10 +306,10 @@ function Footer() {
           <div className="flex flex-col gap-2 text-xs text-muted-foreground sm:items-end">
             <span>
               Contract:{" "}
-              <span className="font-mono text-foreground/70">CONTRACT_ADDRESS_PLACEHOLDER</span>
+              <span className="font-mono text-foreground/70">0x562BbB4B400124904bDd18B337844f87e269B7c2</span>
             </span>
             <a
-              href="GITHUB_LINK_PLACEHOLDER"
+              href="https://github.com/globabe/redress-agent.git"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 hover:text-teal"
