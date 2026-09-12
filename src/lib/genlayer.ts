@@ -77,9 +77,7 @@ async function write(functionName: string, args: Array<string | number>, waitFor
   const fees = {
     distribution: estimate.distribution,
     feeValue: estimate.feeValue,
-    ...(estimate.messageAllocations
-      ? { messageAllocations: estimate.messageAllocations }
-      : {}),
+    ...(estimate.messageAllocations ? { messageAllocations: estimate.messageAllocations } : {}),
   };
   const hash = await client.writeContract({
     address: CONTRACT_ADDRESS,
