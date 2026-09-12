@@ -4,3 +4,4 @@
 - [x] Build a static Redress landing page using the uploaded logo and brand copy
 - [x] Fix Studio Next wallet writes and add in-app wallet disconnect
 - [x] Refine mandate inputs and randomize the simulated purchase outcome
+- [x] Add purchased-type and purchased-color shoe icons to Step 2
