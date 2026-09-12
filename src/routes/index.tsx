@@ -101,7 +101,7 @@ function Hero() {
             alt="Redress"
             width={96}
             height={96}
-            className="size-12 sm:size-16"
+            className="size-14 sm:size-20"
           />
         </div>
         <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-teal">
