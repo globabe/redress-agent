@@ -5,6 +5,7 @@ import {
   ChevronRight,
   CircleAlert,
   ExternalLink,
+  Footprints,
   LoaderCircle,
   LockKeyhole,
   LogOut,
@@ -16,7 +17,6 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import blueShoes from "@/assets/blue-running-shoes.jpg";
 import logoAsset from "@/assets/redress-logo-symbol.png.asset.json";
 import {
   adjudicate,
@@ -78,62 +78,103 @@ function parseNumericField(rawValue: string): number {
   return Number.isFinite(parsed) ? Math.trunc(parsed) : 0;
 }
 
-const defaultIntent: Intent = {
-  product: "Running shoes",
-  color: "black",
-  size: "42",
-  maxPrice: 150,
-  deadlineDays: 5,
-  returnDays: 30,
+const emptyIntent: Intent = {
+  product: "",
+  color: "",
+  size: "",
+  maxPrice: 0,
+  deadlineDays: 0,
+  returnDays: 0,
 };
 
-const mismatchPurchase: Purchase = {
-  color: "blue",
-  size: "41",
-  price: 129,
-  deliveryDays: 3,
-  returnDays: 30,
-};
+const shoeTypes = ["Running shoes", "High heels", "Boots", "Sandals", "Sneakers"];
+const alternativeColors = ["black", "blue", "red", "white", "green"];
 
-const matchingPurchase: Purchase = {
-  color: "black",
-  size: "42",
-  price: 140,
-  deliveryDays: 4,
-  returnDays: 30,
-};
+function randomItem<T>(items: T[]): T {
+  const selected = items[Math.floor(Math.random() * items.length)];
+  if (selected === undefined) {
+    throw new Error("A simulated purchase option could not be selected.");
+  }
+  return selected;
+}
+
+function createSimulatedPurchase(intent: Intent, forceMatch: boolean): Purchase {
+  const shouldFullyMatch = forceMatch || Math.random() < 0.2;
+  const mismatch = shouldFullyMatch
+    ? [false, false, false, false, false]
+    : Array.from({ length: 5 }, () => Math.random() < 0.4);
+
+  if (!shouldFullyMatch && !mismatch.some(Boolean)) {
+    mismatch[Math.floor(Math.random() * mismatch.length)] = true;
+  }
+
+  const colors = alternativeColors.filter(
+    (color) => color.toLowerCase() !== intent.color.toLowerCase(),
+  );
+  const numericSize = Number(intent.size);
+  const alternateSize = Number.isFinite(numericSize)
+    ? String(numericSize + 1)
+    : `${intent.size} wide`;
+
+  return {
+    color: mismatch[0] ? randomItem(colors) : intent.color,
+    size: mismatch[1] ? alternateSize : intent.size,
+    price: mismatch[2]
+      ? intent.maxPrice + Math.floor(Math.random() * 36) + 10
+      : Math.max(1, intent.maxPrice - Math.floor(Math.random() * 11)),
+    deliveryDays: mismatch[3]
+      ? intent.deadlineDays + Math.floor(Math.random() * 4) + 1
+      : Math.max(1, intent.deadlineDays - Math.floor(Math.random() * 2)),
+    returnDays: mismatch[4]
+      ? Math.max(0, intent.returnDays - Math.floor(Math.random() * 10) - 1)
+      : intent.returnDays + Math.floor(Math.random() * 6),
+  };
+}
+
+function purchaseFulfillsIntent(purchase: Purchase, intent: Intent) {
+  return (
+    purchase.color.toLowerCase() === intent.color.toLowerCase() &&
+    purchase.size === intent.size &&
+    purchase.price <= intent.maxPrice &&
+    purchase.deliveryDays <= intent.deadlineDays &&
+    purchase.returnDays >= intent.returnDays
+  );
+}
 
 const steps = ["Intent", "Purchase", "Adjudicate", "Outcome"];
 
 function RedressPage() {
-  const [intent, setIntent] = useState(defaultIntent);
+  const [intent, setIntent] = useState(emptyIntent);
   const [rawNumeric, setRawNumeric] = useState({
-    maxPrice: String(defaultIntent.maxPrice),
-    deadlineDays: String(defaultIntent.deadlineDays),
-    returnDays: String(defaultIntent.returnDays),
+    maxPrice: "",
+    deadlineDays: "",
+    returnDays: "",
   });
   const [step, setStep] = useState(1);
   const [mandateId, setMandateId] = useState("");
   const [purchaseRecorded, setPurchaseRecorded] = useState(false);
   const [agentReady, setAgentReady] = useState(false);
   const [happyPath, setHappyPath] = useState(false);
+  const [purchase, setPurchase] = useState<Purchase | null>(null);
   const [verdict, setVerdict] = useState<Verdict | null>(null);
   const [walletAddress, setWalletAddress] = useState("");
   const [busy, setBusy] = useState<"mandate" | "purchase" | "adjudicate" | "wallet" | null>(null);
   const [error, setError] = useState("");
 
-  const purchase = happyPath ? matchingPurchase : mismatchPurchase;
   const specs = useMemo(
     () => `color:${intent.color},size:${intent.size}`,
     [intent.color, intent.size],
   );
-  const purchaseSpecs = `color:${purchase.color},size:${purchase.size}`;
+  const purchaseSpecs = purchase ? `color:${purchase.color},size:${purchase.size}` : "";
 
   useEffect(() => {
     if (step !== 2 || agentReady) return;
-    const timer = window.setTimeout(() => setAgentReady(true), 1600);
+    const timer = window.setTimeout(() => {
+      setPurchase(createSimulatedPurchase(intent, happyPath));
+      setAgentReady(true);
+    }, 1600);
     return () => window.clearTimeout(timer);
-  }, [agentReady, step]);
+  }, [agentReady, happyPath, intent, step]);
 
   function showError(caught: unknown) {
     const message =
@@ -167,6 +208,21 @@ function RedressPage() {
   }
 
   async function handleCreateMandate() {
+    if (!intent.product || !intent.color.trim() || !intent.size.trim()) {
+      setError("Choose a shoe type and enter its color and size.");
+      return;
+    }
+    if (
+      !rawNumeric.maxPrice ||
+      !rawNumeric.deadlineDays ||
+      !rawNumeric.returnDays ||
+      intent.maxPrice <= 0 ||
+      intent.deadlineDays <= 0 ||
+      intent.returnDays <= 0
+    ) {
+      setError("Enter a valid max price, delivery deadline, and return window.");
+      return;
+    }
     setBusy("mandate");
     setError("");
     try {
@@ -189,6 +245,7 @@ function RedressPage() {
 
   async function handlePurchase() {
     if (!mandateId) return setError("Create the purchase intent before recording a purchase.");
+    if (!purchase) return setError("Wait for the agent to finish finding a purchase.");
     setBusy("purchase");
     setError("");
     try {
@@ -217,16 +274,18 @@ function RedressPage() {
       await adjudicate(mandateId);
       const result = await getVerdict(mandateId);
       const normalized = parseContractJson(result);
+      if (!purchase) throw new Error("No purchase is available for adjudication.");
+      const fulfilled = purchaseFulfillsIntent(purchase, intent);
       setVerdict({
         verdict: String(
-          normalized["verdict"] ?? normalized["result"] ?? (happyPath ? "FULFILLED" : "BREACH"),
+          normalized["verdict"] ?? normalized["result"] ?? (fulfilled ? "FULFILLED" : "BREACH"),
         ),
-        remedy: String(normalized["remedy"] ?? (happyPath ? "NONE" : "EXCHANGE")),
+        remedy: String(normalized["remedy"] ?? (fulfilled ? "NONE" : "EXCHANGE")),
         reason: String(
           normalized["reason"] ??
-            (happyPath
+            (fulfilled
               ? "Every material requirement in the human's intent was satisfied."
-              : "The purchase deviates from the stated color and size requirements."),
+              : "One or more purchase terms deviate from the human's stated intent."),
         ),
       });
       setStep(4);
@@ -242,13 +301,14 @@ function RedressPage() {
     setMandateId("");
     setPurchaseRecorded(false);
     setAgentReady(false);
+    setPurchase(null);
     setVerdict(null);
     setError("");
-    setIntent(defaultIntent);
+    setIntent(emptyIntent);
     setRawNumeric({
-      maxPrice: String(defaultIntent.maxPrice),
-      deadlineDays: String(defaultIntent.deadlineDays),
-      returnDays: String(defaultIntent.returnDays),
+      maxPrice: "",
+      deadlineDays: "",
+      returnDays: "",
     });
     setStep(1);
   }
@@ -353,12 +413,21 @@ function RedressPage() {
             </p>
 
             <div className="mt-6 space-y-4">
-              <Field label="Product">
-                <input
-                  aria-label="Product"
+              <Field label="Product (Shoes)">
+                <select
+                  aria-label="Product (Shoes)"
                   value={intent.product}
                   onChange={(event) => setIntent({ ...intent, product: event.target.value })}
-                />
+                >
+                  <option value="" disabled>
+                    Select shoe type
+                  </option>
+                  {shoeTypes.map((shoe) => (
+                    <option key={shoe} value={shoe}>
+                      {shoe}
+                    </option>
+                  ))}
+                </select>
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Color">
@@ -468,18 +537,19 @@ function RedressPage() {
                 </span>
               )}
             </div>
-            {agentReady ? (
+            {agentReady && purchase ? (
               <div className="mt-4 grid items-stretch gap-3 sm:grid-cols-5">
                 <div className="relative overflow-hidden rounded-xl border border-violet/30 bg-ink/60 p-4 sm:col-span-2">
-                  <img
-                    src={blueShoes}
-                    alt="Blue running shoes"
-                    width={640}
-                    height={640}
-                    loading="lazy"
-                    className="aspect-square w-full rounded-lg object-cover"
-                  />
-                  <p className="mt-3 font-display font-semibold text-foreground">Running shoes</p>
+                  <div
+                    className="grid aspect-square w-full place-items-center rounded-lg border border-violet/20 bg-secondary/60"
+                    role="img"
+                    aria-label="Generic shoe placeholder"
+                  >
+                    <Footprints className="size-20 text-violet/70" strokeWidth={1.25} />
+                  </div>
+                  <p className="mt-3 font-display font-semibold text-foreground">
+                    {intent.product}
+                  </p>
                   <p className="text-sm text-muted-foreground">Meridian Trail Series</p>
                   <p className="mt-2 font-display text-2xl font-bold text-foreground">
                     ${purchase.price}
@@ -520,7 +590,13 @@ function RedressPage() {
               title="Redress Adjudicates"
               tone="coral"
             />
-            <ComparisonTable intent={intent} purchase={purchase} />
+            {purchase ? (
+              <ComparisonTable intent={intent} purchase={purchase} />
+            ) : (
+              <p className="mt-5 text-sm text-muted-foreground">
+                Complete the purchase step to compare the result.
+              </p>
+            )}
             {verdict && <VerdictCard verdict={verdict} />}
             <Button
               onClick={handleAdjudicate}
@@ -556,12 +632,10 @@ function RedressPage() {
                   <p className="font-display text-xl font-semibold text-foreground">NONE</p>
                 </div>
               </div>
-              <div className="mt-4 space-y-2 text-sm">
-                <OutcomeRow label="Color" value="black" />
-                <OutcomeRow label="Size" value="42" />
-                <OutcomeRow label="Price" value="$140" />
-                <OutcomeRow label="Delivery" value="4 days" />
-              </div>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                Every submitted specification, price limit, delivery deadline, and return term will
+                be preserved.
+              </p>
             </div>
             <Button
               onClick={() => restart(true)}
@@ -627,7 +701,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   return (
     <label className="block text-xs font-medium text-muted-foreground">
       {label}
-      <span className="mt-1.5 block [&>input]:w-full [&>input]:rounded-lg [&>input]:border [&>input]:border-border/70 [&>input]:bg-ink/60 [&>input]:px-3.5 [&>input]:py-2.5 [&>input]:text-sm [&>input]:text-foreground [&>input]:outline-none [&>input]:transition-colors [&>input]:focus:border-teal/60 [&>input]:focus:ring-1 [&>input]:focus:ring-teal/40">
+      <span className="mt-1.5 block [&>input]:w-full [&>input]:rounded-lg [&>input]:border [&>input]:border-border/70 [&>input]:bg-ink/60 [&>input]:px-3.5 [&>input]:py-2.5 [&>input]:text-sm [&>input]:text-foreground [&>input]:outline-none [&>input]:transition-colors [&>input]:focus:border-teal/60 [&>input]:focus:ring-1 [&>input]:focus:ring-teal/40 [&>select]:w-full [&>select]:rounded-lg [&>select]:border [&>select]:border-border/70 [&>select]:bg-ink [&>select]:px-3.5 [&>select]:py-2.5 [&>select]:text-sm [&>select]:text-foreground [&>select]:outline-none [&>select]:transition-colors [&>select]:focus:border-teal/60 [&>select]:focus:ring-1 [&>select]:focus:ring-teal/40">
         {children}
       </span>
     </label>
@@ -738,18 +812,6 @@ function VerdictCard({ verdict }: { verdict: Verdict }) {
       <blockquote className="mt-4 border-l-2 border-current pl-4 text-sm leading-relaxed text-muted-foreground">
         &quot;{verdict.reason}&quot;
       </blockquote>
-    </div>
-  );
-}
-
-function OutcomeRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="inline-flex items-center gap-1.5 font-medium text-emerald">
-        {value}
-        <Check className="size-3" />
-      </span>
     </div>
   );
 }
