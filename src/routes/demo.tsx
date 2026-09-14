@@ -384,6 +384,21 @@ function RedressPage() {
           </div>
         </header>
 
+        {walletAddress && wrongChain && (
+          <div
+            role="alert"
+            className="mt-6 flex items-start gap-3 rounded-xl border border-coral/50 bg-coral/10 px-4 py-3"
+          >
+            <CircleAlert className="mt-0.5 size-4 shrink-0 text-coral" />
+            <p className="text-sm text-coral">
+              <span className="font-semibold">Wrong network.</span> Your wallet is not on GenLayer
+              Studio Next (Chain ID {GENLAYER_CHAIN_ID}). Switch networks in your wallet before
+              submitting any transaction.
+            </p>
+          </div>
+        )}
+
+
         <div className="mt-10 flex items-center gap-2 sm:gap-3" aria-label="Wizard progress">
           {steps.map((label, index) => {
             const number = index + 1;
@@ -530,6 +545,19 @@ function RedressPage() {
             </Button>
             <p className="mt-2 text-center text-[11px] text-muted-foreground">
               MetaMask or a compatible wallet is required to write.
+            </p>
+            <p className="mt-2 text-center text-[11px] text-muted-foreground">
+              Need testnet GEN?{" "}
+              <a
+                href="https://studio-next.genlayer.com"
+                target="_blank"
+                rel="noreferrer"
+                className="font-medium text-teal underline-offset-2 hover:underline"
+              >
+                Get GEN tokens <ExternalLink className="inline size-3 align-[-1px]" />
+              </a>
+              {" — "}open Studio, click the droplet icon, paste your wallet address to get testnet
+              GEN.
             </p>
           </section>
 
