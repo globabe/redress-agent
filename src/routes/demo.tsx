@@ -407,6 +407,15 @@ function RedressPage() {
                 <span className="sm:hidden">Connect</span>
               </Button>
             )}
+            <Button
+              variant="outline"
+              onClick={() => restart(false)}
+              disabled={busy !== null}
+              className="h-9 rounded-lg border-border/70 bg-ink/60 px-3 text-xs font-semibold text-foreground shadow-none hover:bg-ink-2/70 hover:text-foreground sm:px-4 sm:text-sm"
+            >
+              <RefreshCcw />
+              <span className="hidden sm:inline">Start Over</span>
+            </Button>
           </div>
         </header>
 
