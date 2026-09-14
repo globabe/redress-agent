@@ -407,6 +407,15 @@ function RedressPage() {
                 <span className="sm:hidden">Connect</span>
               </Button>
             )}
+            <Button
+              variant="outline"
+              onClick={() => restart(false)}
+              disabled={busy !== null}
+              className="h-9 rounded-lg border-border/70 bg-ink/60 px-3 text-xs font-semibold text-foreground shadow-none hover:bg-ink-2/70 hover:text-foreground sm:px-4 sm:text-sm"
+            >
+              <RefreshCcw />
+              <span className="hidden sm:inline">Start Over</span>
+            </Button>
           </div>
         </header>
 
@@ -707,16 +716,11 @@ function RedressPage() {
         <footer className="mt-8 flex flex-col gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <span>
             Intelligent Contract ·{" "}
-            <span className="font-mono text-foreground/70">0x562BbB4B…69B7c2</span>
+            <span className="font-mono text-foreground/70">
+              0x06a7Aaf8D575D5dC121bd0B185e2657fbB33d0c4
+            </span>
           </span>
-          <a
-            className="inline-flex items-center gap-1 hover:text-teal"
-            href="https://studio-next.genlayer.com"
-            target="_blank"
-            rel="noreferrer"
-          >
-            GenLayer · Agent Tank Demo <ExternalLink className="size-3" />
-          </a>
+          <span className="text-muted-foreground">Built for GenLayer Agent Tank Hackathon</span>
         </footer>
       </div>
     </div>
