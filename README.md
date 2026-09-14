@@ -43,18 +43,21 @@ Judging intent-fulfillment isn't deterministic. GenLayer's Intelligent
 Contracts let independent AI validators reason over the mandate and the
 purchase evidence, then reach consensus on the outcome — something a
 traditional smart contract can't do. The contract's leader proposes a
-verdict; validators independently re-run the judgment and must agree before
-it's finalized.
+verdict; each validator independently re-runs the same judgment against
+the same evidence and only agrees if its own decision matches the
+leader's — not just checking that the response looks well-formed. This
+means the decision genuinely comes from the data, not from one node's
+unverified claim.
 
 ## Contract
 
 Deployed on GenLayer Studio Next (Consensus v0.6 RC, Chain ID 61997):
 
 ```
-0x562BbB4B400124904bDd18B337844f87e269B7c2
+0x06a7Aaf8D575D5dC121bd0B185e2657fbB33d0c4
 ```
 
-View on explorer: https://explorer-studio-next.genlayer.com/address/0x562BbB4B400124904bDd18B337844f87e269B7c2
+View on explorer: https://explorer-studio-next.genlayer.com/address/0x06a7Aaf8D575D5dC121bd0B185e2657fbB33d0c4
 
 ### Methods
 
@@ -88,4 +91,4 @@ layer without building it themselves.
 
 ## Built for
 
-GenLayer Agent Tank Hackathon — Onchain Justice track..
+GenLayer Agent Tank Hackathon — Onchain Justice track.
