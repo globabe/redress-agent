@@ -612,7 +612,7 @@ function RedressPage() {
                     }
                   />
                 </Field>
-                <Field label="Deadline (days)">
+                <Field label="Delivery deadline (days)">
                   <input
                     aria-label="Delivery deadline"
                     type="number"
@@ -655,7 +655,7 @@ function RedressPage() {
             </div>
             <Button
               onClick={handleCreateMandate}
-              disabled={busy !== null}
+              disabled={busy !== null || step > 1}
               className="mt-5 h-11 w-full rounded-xl bg-teal font-semibold text-ink shadow-none hover:bg-teal/90"
             >
               {busy === "mandate" ? <LoaderCircle className="animate-spin" /> : <LockKeyhole />}
@@ -722,7 +722,7 @@ function RedressPage() {
             )}
             <Button
               onClick={handlePurchase}
-              disabled={!agentReady || busy !== null}
+              disabled={!agentReady || busy !== null || step > 2}
               variant="outline"
               className="mt-5 h-11 w-full rounded-xl border-teal/50 bg-teal/10 text-teal shadow-none hover:bg-teal/20 hover:text-teal"
             >
@@ -748,7 +748,7 @@ function RedressPage() {
             {verdict && <VerdictCard verdict={verdict} />}
             <Button
               onClick={handleAdjudicate}
-              disabled={!purchaseRecorded || busy !== null}
+              disabled={!purchaseRecorded || busy !== null || step > 3}
               className="mt-5 h-11 w-full rounded-xl bg-coral font-semibold text-ink shadow-none hover:bg-coral/90"
             >
               {busy === "adjudicate" ? <LoaderCircle className="animate-spin" /> : <ShieldCheck />}
