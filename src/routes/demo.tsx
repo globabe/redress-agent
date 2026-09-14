@@ -369,6 +369,17 @@ function RedressPage() {
               <span className="animate-glow-pulse size-2 rounded-full bg-violet" />
               <span className="text-xs font-medium text-violet">GenLayer Studio Next</span>
             </div>
+            <a
+              className="inline-flex items-center gap-1.5 rounded-lg border border-teal/30 bg-teal/10 px-3 py-2 text-xs font-semibold text-teal hover:bg-teal/20"
+              href="https://studio-next.genlayer.com"
+              target="_blank"
+              rel="noreferrer"
+              title="Open Studio, click the droplet icon, paste your wallet address to get testnet GEN"
+            >
+              <Droplet className="size-3.5" />
+              <span className="hidden sm:inline">Get GEN tokens</span>
+              <span className="sm:hidden">GEN</span>
+            </a>
             {walletAddress ? (
               <div className="flex items-center gap-2">
                 <span className="hidden text-xs font-medium text-teal sm:inline">
