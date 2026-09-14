@@ -24,6 +24,7 @@ import {
   createMandate,
   disconnectWallet,
   getChainId,
+  switchToStudioNetwork,
   getVerdict,
   parseContractJson,
   recordPurchase,
@@ -216,7 +217,28 @@ function RedressPage() {
     setBusy("wallet");
     setError("");
     try {
-      setWalletAddress(await connectWallet());
+      const account = await connectWallet();
+      setWalletAddress(account);
+      // Prompt the wallet to switch to GenLayer Studio Next if needed.
+      const current = await getChainId();
+      setChainId(current);
+      if (current !== expectedChainId) {
+        await switchToStudioNetwork();
+        setChainId(await getChainId());
+      }
+    } catch (caught) {
+      showError(caught);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function handleSwitchNetwork() {
+    setBusy("wallet");
+    setError("");
+    try {
+      await switchToStudioNetwork();
+      setChainId(await getChainId());
     } catch (caught) {
       showError(caught);
     } finally {
