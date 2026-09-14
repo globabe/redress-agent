@@ -307,7 +307,7 @@ function Footer() {
             <span>
               Contract:{" "}
               <span className="font-mono text-foreground/70">
-                0x562BbB4B400124904bDd18B337844f87e269B7c2
+                0x06a7Aaf8D575D5dC121bd0B185e2657fbB33d0c4
               </span>
             </span>
             <a

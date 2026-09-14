@@ -2,7 +2,7 @@ import { abi, createClient, isSuccessful } from "genlayer-js";
 import { studioDevnet } from "genlayer-js/chains";
 import { TransactionStatus } from "genlayer-js/types";
 
-const CONTRACT_ADDRESS = "0x562BbB4B400124904bDd18B337844f87e269B7c2" as `0x${string}`;
+const CONTRACT_ADDRESS = "0x06a7Aaf8D575D5dC121bd0B185e2657fbB33d0c4" as `0x${string}`;
 
 type ClientChain = NonNullable<NonNullable<Parameters<typeof createClient>[0]>["chain"]>;
 const studioDevnetChain = studioDevnet as unknown as ClientChain;
