@@ -9,6 +9,8 @@ const studioDevnetChain = studioDevnet as unknown as ClientChain;
 
 type EthereumProvider = {
   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+  on?: (event: string, listener: (...args: unknown[]) => void) => void;
+  removeListener?: (event: string, listener: (...args: unknown[]) => void) => void;
 };
 
 declare global {
@@ -167,6 +169,26 @@ function extractReturnValue(receipt: Record<string, unknown>): string {
     }
   }
   return "";
+}
+
+export const GENLAYER_CHAIN_ID = 61997;
+
+export async function getWalletChainId(): Promise<number | null> {
+  if (typeof window === "undefined" || !window.ethereum) return null;
+  const hex = (await window.ethereum.request({ method: "eth_chainId" })) as string;
+  const chainId = Number.parseInt(hex, 16);
+  return Number.isFinite(chainId) ? chainId : null;
+}
+
+export function onWalletChainChanged(handler: (chainId: number) => void): () => void {
+  const provider = typeof window === "undefined" ? undefined : window.ethereum;
+  if (!provider?.on) return () => {};
+  const listener = (hexChainId: unknown) => {
+    const chainId = Number.parseInt(String(hexChainId), 16);
+    if (Number.isFinite(chainId)) handler(chainId);
+  };
+  provider.on("chainChanged", listener);
+  return () => provider.removeListener?.("chainChanged", listener);
 }
 
 export async function connectWallet() {
