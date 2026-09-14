@@ -191,6 +191,33 @@ export async function getChainId() {
   return Number.parseInt(chainId, 16);
 }
 
+const STUDIO_CHAIN_HEX = `0x${(61997).toString(16)}`;
+
+export async function switchToStudioNetwork() {
+  const provider = getProvider();
+  try {
+    await provider.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: STUDIO_CHAIN_HEX }],
+    });
+  } catch (caught) {
+    const code = (caught as { code?: number | string })?.code;
+    // 4902: the chain isn't added to the wallet yet — add it, then switch.
+    if (String(code) !== "4902") throw caught;
+    await provider.request({
+      method: "wallet_addEthereumChain",
+      params: [
+        {
+          chainId: STUDIO_CHAIN_HEX,
+          chainName: "GenLayer Studio Next",
+          rpcUrls: ["https://studio-next.genlayer.com/api"],
+          nativeCurrency: { name: "GEN", symbol: "GEN", decimals: 18 },
+        },
+      ],
+    });
+  }
+}
+
 export function parseContractJson(value: unknown) {
   if (value && typeof value === "object" && !Array.isArray(value)) {
     return value as Record<string, unknown>;

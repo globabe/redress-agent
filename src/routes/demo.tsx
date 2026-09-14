@@ -24,6 +24,7 @@ import {
   createMandate,
   disconnectWallet,
   getChainId,
+  switchToStudioNetwork,
   getVerdict,
   parseContractJson,
   recordPurchase,
@@ -216,7 +217,28 @@ function RedressPage() {
     setBusy("wallet");
     setError("");
     try {
-      setWalletAddress(await connectWallet());
+      const account = await connectWallet();
+      setWalletAddress(account);
+      // Prompt the wallet to switch to GenLayer Studio Next if needed.
+      const current = await getChainId();
+      setChainId(current);
+      if (current !== expectedChainId) {
+        await switchToStudioNetwork();
+        setChainId(await getChainId());
+      }
+    } catch (caught) {
+      showError(caught);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function handleSwitchNetwork() {
+    setBusy("wallet");
+    setError("");
+    try {
+      await switchToStudioNetwork();
+      setChainId(await getChainId());
     } catch (caught) {
       showError(caught);
     } finally {
@@ -420,13 +442,21 @@ function RedressPage() {
         </header>
 
         {wrongNetwork && (
-          <div className="mt-4 flex items-center gap-3 rounded-xl border border-coral/40 bg-coral/10 px-4 py-3 text-sm text-coral">
+          <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-coral/40 bg-coral/10 px-4 py-3 text-sm text-coral">
             <CircleAlert className="size-5 shrink-0" />
-            <span>
+            <span className="flex-1">
               Your wallet is on chain <span className="font-mono">{chainId}</span>, not GenLayer
-              Studio Next ( <span className="font-mono">{expectedChainId}</span>). Switch networks
-              in MetaMask before transacting.
+              Studio Next (<span className="font-mono">{expectedChainId}</span>).
             </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSwitchNetwork}
+              disabled={busy !== null}
+              className="border-coral/50 bg-transparent text-coral hover:bg-coral/15 hover:text-coral"
+            >
+              Switch network
+            </Button>
           </div>
         )}
 
