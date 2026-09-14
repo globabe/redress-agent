@@ -218,7 +218,6 @@ export async function switchToStudioNetwork() {
   }
 }
 
-
 export function parseContractJson(value: unknown) {
   if (value && typeof value === "object" && !Array.isArray(value)) {
     return value as Record<string, unknown>;
