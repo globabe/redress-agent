@@ -398,7 +398,6 @@ function RedressPage() {
           </div>
         )}
 
-
         <div className="mt-10 flex items-center gap-2 sm:gap-3" aria-label="Wizard progress">
           {steps.map((label, index) => {
             const number = index + 1;
