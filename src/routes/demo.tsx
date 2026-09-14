@@ -162,8 +162,12 @@ function RedressPage() {
   const [purchase, setPurchase] = useState<Purchase | null>(null);
   const [verdict, setVerdict] = useState<Verdict | null>(null);
   const [walletAddress, setWalletAddress] = useState("");
+  const [chainId, setChainId] = useState<number | null>(null);
   const [busy, setBusy] = useState<"mandate" | "purchase" | "adjudicate" | "wallet" | null>(null);
   const [error, setError] = useState("");
+
+  const expectedChainId = 61997;
+  const wrongNetwork = chainId !== null && chainId !== expectedChainId;
 
   const specs = useMemo(
     () => `color:${intent.color},size:${intent.size}`,
