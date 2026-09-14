@@ -18,11 +18,14 @@ import {
 import { Button } from "@/components/ui/button";
 import logoAsset from "@/assets/redress-logo-symbol.png.asset.json";
 import {
+  GENLAYER_CHAIN_ID,
   adjudicate,
   connectWallet,
   createMandate,
   disconnectWallet,
   getVerdict,
+  getWalletChainId,
+  onWalletChainChanged,
   parseContractJson,
   recordPurchase,
 } from "@/lib/genlayer";
@@ -160,6 +163,7 @@ function RedressPage() {
   const [purchase, setPurchase] = useState<Purchase | null>(null);
   const [verdict, setVerdict] = useState<Verdict | null>(null);
   const [walletAddress, setWalletAddress] = useState("");
+  const [wrongChain, setWrongChain] = useState(false);
   const [busy, setBusy] = useState<"mandate" | "purchase" | "adjudicate" | "wallet" | null>(null);
   const [error, setError] = useState("");
 
