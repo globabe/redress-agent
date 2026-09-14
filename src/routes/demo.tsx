@@ -365,6 +365,63 @@ function RedressPage() {
     setStep(1);
   }
 
+  // Step 4's happy-path button runs a fresh mandate plus a purchase that
+  // satisfies it, then drops the user straight on Step 3 to adjudicate.
+  async function handleMatchingRun() {
+    const baseIntent: Intent =
+      intent.product && intent.color.trim() && intent.size.trim() && intent.maxPrice > 0
+        ? intent
+        : {
+            product: "Running shoes",
+            color: "black",
+            size: "42",
+            maxPrice: 150,
+            deadlineDays: 5,
+            returnDays: 30,
+          };
+    const matchingPurchase = createSimulatedPurchase(baseIntent, true);
+
+    setBusy("mandate");
+    setError("");
+    setHappyPath(true);
+    setVerdict(null);
+    setPurchaseRecorded(false);
+    setAgentReady(true);
+    setIntent(baseIntent);
+    setRawNumeric({
+      maxPrice: String(baseIntent.maxPrice),
+      deadlineDays: String(baseIntent.deadlineDays),
+      returnDays: String(baseIntent.returnDays),
+    });
+    setPurchase(matchingPurchase);
+
+    try {
+      const newMandateId = await createMandate(
+        baseIntent.product,
+        `color:${baseIntent.color},size:${baseIntent.size}`,
+        baseIntent.maxPrice,
+        baseIntent.deadlineDays,
+        baseIntent.returnDays,
+      );
+      setMandateId(newMandateId);
+      setBusy("purchase");
+      await recordPurchase(
+        newMandateId,
+        matchingPurchase.product,
+        `color:${matchingPurchase.color},size:${matchingPurchase.size}`,
+        matchingPurchase.price,
+        matchingPurchase.deliveryDays,
+        matchingPurchase.returnDays,
+      );
+      setPurchaseRecorded(true);
+      setStep(3);
+    } catch (caught) {
+      showError(caught);
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <div className="min-h-screen overflow-hidden bg-ink font-body text-foreground antialiased">
       <div
@@ -729,13 +786,21 @@ function RedressPage() {
               </p>
             </div>
             <Button
-              onClick={() => restart(true)}
+              onClick={() => void handleMatchingRun()}
+              disabled={busy !== null}
               variant="outline"
               className="mt-4 h-11 w-full rounded-xl border-emerald/50 bg-emerald/10 text-emerald shadow-none hover:bg-emerald/20 hover:text-emerald"
             >
               <RefreshCcw />
-              Try again with a matching purchase
+              {busy === "mandate"
+                ? "Creating matching mandate..."
+                : busy === "purchase"
+                  ? "Recording matching purchase..."
+                  : "Try again with a matching purchase"}
             </Button>
+            <p className="mt-2 text-center text-[11px] text-muted-foreground">
+              Approve two wallet prompts, then adjudicate on Step 3.
+            </p>
           </section>
         </main>
 
