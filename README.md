@@ -1,137 +1,91 @@
-# Redress Agent
+# Redress
 
-Build a polished, modern web app called "Redress" — a demo for a GenLayer hackathon (Agent Tank).
+**Intent. Judgment. Remedy.**
 
-Concept
+Redress is an accountability layer for autonomous commerce, built on GenLayer.
+When an AI agent buys something on a human's behalf, Redress judges whether
+the purchase actually satisfied the human's original intent — not just
+whether the merchant fulfilled the order.
 
-Redress judges whether an AI shopping agent's purchase actually satisfied the human's original stated intent — not whether the merchant fulfilled its own promise, but whether what was bought matches what was asked for. Example: a human asks for black running shoes, size 42; the agent buys blue shoes, size 41. The merchant delivered exactly what was ordered, but the purchase still fails the human's intent. Redress uses a GenLayer Intelligent Contract to judge this and decide the remedy.
+**Live demo:** https://redressagent.app/demo
+**Landing page:** https://redressagent.app
 
-Visual style
+## The problem
 
-Clean, modern, dark-themed SaaS aesthetic (similar to Stripe/Linear). Confident typography, generous whitespace, subtle animations between steps. Use a single accent color (deep blue or teal) for primary actions. Make it feel like a real product, not a rough prototype — this needs to look genuinely polished.
+Agentic commerce is built around discover → negotiate → pay → execute. But
+that flow stops at payment. Humans never stopped there — when a purchase is
+wrong, we have returns, exchanges, and refunds.
 
-Flow — 4 screens/steps in a single-page wizard
+The deeper issue: a merchant can deliver *exactly* what was ordered, and the
+order can still be wrong. An agent can misread a request — buy blue sneakers
+instead of black, size 41 instead of 42 — and the merchant's side of the deal
+is completely fulfilled. Nobody checks whether the human's actual intent was
+honored. That's the gap Redress fills.
 
-Step 1 — Create Purchase Intent
+## How it works
 
-A form where the "human" states what they want:
+1. **Intent** — The human states exactly what they want: product, specs,
+   max price, delivery deadline, return window. The contract locks this in
+   as a mandate before any purchase happens.
+2. **Purchase** — The agent's actual purchase is recorded on-chain: what it
+   bought, its specs, price, delivery time, and return terms offered.
+3. **Judgment** — GenLayer's Intelligent Contracts compare the purchase
+   against the original mandate. This isn't a simple equality check —
+   "does this substantially satisfy what was asked for" requires
+   interpretation, which is why it needs on-chain AI reasoning with
+   validator consensus, not just arithmetic.
+4. **Remedy** — If the purchase breaches the mandate, Redress determines
+   the appropriate remedy: exchange, refund, or return.
 
-Product (text, default: "Running shoes")
+## Why GenLayer
 
-Color (text, default: "black")
+Judging intent-fulfillment isn't deterministic. GenLayer's Intelligent
+Contracts let independent AI validators reason over the mandate and the
+purchase evidence, then reach consensus on the outcome — something a
+traditional smart contract can't do. The contract's leader proposes a
+verdict; validators independently re-run the judgment and must agree before
+it's finalized.
 
-Size (text, default: "42")
+## Contract
 
-Max price (number, default: 150)
+Deployed on GenLayer Studio Next (Consensus v0.6 RC, Chain ID 61997):
 
-Delivery deadline in days (number, default: 5)
-
-Return window required in days (number, default: 30)
-
-Button: "Submit Intent" — on click, call the smart contract's create_mandate method (see Blockchain Integration below) with these values combined into a specs string like "color:black,size:42". Store the returned mandate_id. Show a loading state while the transaction confirms.
-
-Step 2 — Agent Shops (simulated)
-
-Show a short "🤖 Agent searching for matches..." loading animation (1-2 seconds, fake/simulated, no real search). Then reveal a "found" product card with details that DON'T match what was requested:
-
-Product: "Running shoes"
-
-Color: "blue"
-
-Size: "41"
-
-Price: "$129"
-
-Delivery: "3 days"
-
-Return window offered: "30 days"
-
-Button: "Confirm Purchase" — on click, call record_purchase with these mismatched values (color:blue,size:41) plus price=129, delivery_days=3, return_days_offered=30.
-
-Step 3 — Redress Adjudicates
-
-Show a clean side-by-side comparison table: "What you asked for" vs "What the agent bought" — highlight mismatched fields in red/orange, matched fields in green.
-
-Button: "Request Redress" — calls adjudicate with the mandate_id. Show a realistic loading state ("Validators reviewing the claim...") since this takes a few seconds on-chain.
-
-Then call get_verdict and display the result prominently:
-
-Large badge: BREACH (red) or FULFILLED (green)
-
-Remedy: EXCHANGE / REFUND / RETURN / NONE
-
-The reason text from the contract, shown as a quote/callout
-
-Step 4 — Try the happy path (optional toggle/button)
-
-A "Try again with a matching purchase" button that restarts the flow but lets Step 2 show a product that DOES match (black, size 42, price 140, delivery 4 days, return 30 days) — to demonstrate the contract also correctly returns FULFILLED when everything matches, not just breaches.
-
-Blockchain integration
-
-Use genlayer-js to connect to the deployed contract. Network config:
-
-import { createClient, createWalletClient } from 'genlayer-js';
-
-const customNetwork = {
-  id: 61997,
-  name: 'GenLayer Studio Next',
-  rpcUrls: {
-    default: { http: ['https://studio-next.genlayer.com/api'] }
-  }
-};
-
-export const readClient = createClient({ network: customNetwork });
-
-export async function getWriteClient() {
-  await window.ethereum.request({ method: 'eth_requestAccounts' });
-  return createWalletClient({
-    network: customNetwork,
-    account: window.ethereum,
-  });
-}
-
-
-Contract address: 0x562BbB4B400124904bDd18B337844f87e269B7c2
-
-Contract methods to call:
-
-create_mandate(product: string, specs: string, max_price: number, deadline_days: number, return_days: number) -> string (write)
-
-record_purchase(mandate_id: string, product: string, specs: string, price: number, delivery_days: number, return_days_offered: number) -> None (write)
-
-adjudicate(mandate_id: string) -> string (write)
-
-get_verdict(mandate_id: string) -> string (view, returns a JSON string — parse it)
-
-get_mandate(mandate_id: string) -> string (view, returns a JSON string)
-
-get_purchase(mandate_id: string) -> string (view, returns a JSON string)
-
-Write calls require MetaMask (or similar) connected to the network above. Read calls (get_verdict, get_mandate, get_purchase) don't need a wallet.
-
-Handle loading and error states gracefully — if MetaMask isn't installed or the network isn't added, show a clear message asking the user to connect their wallet, with a button to trigger the connection.
-
-Scope — keep this tight
-
-Do NOT build: a real product catalog, real payment processing, user accounts, a database beyond what's needed to hold wizard state in memory, or any screens beyond the 4 described above. This is a focused demo of ONE purchase scenario, not a full marketplace. Polish over scope.
-
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/23509ff6-a55c-4ac6-8ca3-19e74370e0a6).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
 ```
+0x562BbB4B400124904bDd18B337844f87e269B7c2
+```
+
+View on explorer: https://explorer-studio-next.genlayer.com/address/0x562BbB4B400124904bDd18B337844f87e269B7c2
+
+### Methods
+
+- `create_mandate(product, specs, max_price, deadline_days, return_days) -> mandate_id`
+  Records the human's stated purchase intent.
+- `record_purchase(mandate_id, product, specs, price, delivery_days, return_days_offered)`
+  Records what the agent actually purchased.
+- `adjudicate(mandate_id) -> result`
+  Triggers GenLayer's judgment: compares the purchase against the mandate
+  and returns FULFILLED or BREACH, with a remedy (NONE, EXCHANGE, REFUND,
+  or RETURN) and a reason.
+- `get_mandate(mandate_id)`, `get_purchase(mandate_id)`, `get_verdict(mandate_id)`
+  Read the stored mandate, purchase, and verdict as JSON.
+
+## Demo scope
+
+The live demo illustrates one scenario — a shopping agent purchasing shoes
+— to keep the walkthrough simple and testable. The contract itself is fully
+general-purpose: product, specs, price, delivery terms, and return
+conditions are all open fields. The same mechanism applies to any purchase
+an autonomous agent makes on a human's behalf.
+
+## Roadmap
+
+Redress starts with purchases. The same accountability question — did the
+agent act within what it was actually asked to do — applies anywhere agents
+transact on a human's behalf: booking travel, hiring contractors,
+subscribing to services, managing recurring payments. The long-term goal is
+a developer API so any agent platform can integrate this accountability
+layer without building it themselves.
+
+## Built for
+
+GenLayer Agent Tank Hackathon — Onchain Justice track..
