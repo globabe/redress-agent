@@ -184,6 +184,28 @@ function RedressPage() {
     return () => window.clearTimeout(timer);
   }, [agentReady, happyPath, intent, step]);
 
+  useEffect(() => {
+    async function refreshChain() {
+      try {
+        if (typeof window === "undefined" || !window.ethereum) {
+          setChainId(null);
+          return;
+        }
+        setChainId(await getChainId());
+      } catch {
+        setChainId(null);
+      }
+    }
+    void refreshChain();
+    const provider = typeof window !== "undefined" ? window.ethereum : undefined;
+    if (!provider) return;
+    const handler = () => void refreshChain();
+    provider.addEventListener?.("chainChanged", handler);
+    return () => {
+      provider.removeEventListener?.("chainChanged", handler);
+    };
+  }, [walletAddress]);
+
   function showError(caught: unknown) {
     const message =
       caught instanceof Error ? caught.message : "The transaction could not be completed.";
