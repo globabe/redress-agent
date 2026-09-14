@@ -174,6 +174,15 @@ function RedressPage() {
   const purchaseSpecs = purchase ? `color:${purchase.color},size:${purchase.size}` : "";
 
   useEffect(() => {
+    if (!walletAddress) {
+      setWrongChain(false);
+      return;
+    }
+    void getWalletChainId().then((chainId) => setWrongChain(chainId !== GENLAYER_CHAIN_ID));
+    return onWalletChainChanged((chainId) => setWrongChain(chainId !== GENLAYER_CHAIN_ID));
+  }, [walletAddress]);
+
+  useEffect(() => {
     if (step !== 2 || agentReady) return;
     const timer = window.setTimeout(() => {
       setPurchase(createSimulatedPurchase(intent, happyPath));
