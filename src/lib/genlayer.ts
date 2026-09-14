@@ -183,6 +183,12 @@ export async function disconnectWallet() {
   });
 }
 
+export async function getChainId() {
+  const provider = getProvider();
+  const chainId = (await provider.request({ method: "eth_chainId" })) as string;
+  return Number.parseInt(chainId, 16);
+}
+
 export function parseContractJson(value: unknown) {
   if (value && typeof value === "object" && !Array.isArray(value)) {
     return value as Record<string, unknown>;
