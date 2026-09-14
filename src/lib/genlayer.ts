@@ -9,6 +9,8 @@ const studioDevnetChain = studioDevnet as unknown as ClientChain;
 
 type EthereumProvider = {
   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+  addEventListener?: (event: string, handler: () => void) => void;
+  removeEventListener?: (event: string, handler: () => void) => void;
 };
 
 declare global {
