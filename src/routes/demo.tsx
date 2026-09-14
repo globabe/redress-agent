@@ -414,9 +414,9 @@ function RedressPage() {
           <div className="mt-4 flex items-center gap-3 rounded-xl border border-coral/40 bg-coral/10 px-4 py-3 text-sm text-coral">
             <CircleAlert className="size-5 shrink-0" />
             <span>
-              Your wallet is on chain <span className="font-mono">{chainId}</span>, not GenLayer Studio Next ({" "}
-              <span className="font-mono">{expectedChainId}</span>). Switch networks in MetaMask before
-              transacting.
+              Your wallet is on chain <span className="font-mono">{chainId}</span>, not GenLayer Studio
+              Next ( <span className="font-mono">{expectedChainId}</span>). Switch networks in MetaMask
+              before transacting.
             </span>
           </div>
         )}
