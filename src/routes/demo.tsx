@@ -4,6 +4,7 @@ import {
   Check,
   ChevronRight,
   CircleAlert,
+  Droplet,
   ExternalLink,
   LoaderCircle,
   LockKeyhole,
@@ -18,14 +19,12 @@ import {
 import { Button } from "@/components/ui/button";
 import logoAsset from "@/assets/redress-logo-symbol.png.asset.json";
 import {
-  GENLAYER_CHAIN_ID,
   adjudicate,
   connectWallet,
   createMandate,
   disconnectWallet,
+  getChainId,
   getVerdict,
-  getWalletChainId,
-  onWalletChainChanged,
   parseContractJson,
   recordPurchase,
 } from "@/lib/genlayer";
@@ -163,24 +162,18 @@ function RedressPage() {
   const [purchase, setPurchase] = useState<Purchase | null>(null);
   const [verdict, setVerdict] = useState<Verdict | null>(null);
   const [walletAddress, setWalletAddress] = useState("");
-  const [wrongChain, setWrongChain] = useState(false);
+  const [chainId, setChainId] = useState<number | null>(null);
   const [busy, setBusy] = useState<"mandate" | "purchase" | "adjudicate" | "wallet" | null>(null);
   const [error, setError] = useState("");
+
+  const expectedChainId = 61997;
+  const wrongNetwork = chainId !== null && chainId !== expectedChainId;
 
   const specs = useMemo(
     () => `color:${intent.color},size:${intent.size}`,
     [intent.color, intent.size],
   );
   const purchaseSpecs = purchase ? `color:${purchase.color},size:${purchase.size}` : "";
-
-  useEffect(() => {
-    if (!walletAddress) {
-      setWrongChain(false);
-      return;
-    }
-    void getWalletChainId().then((chainId) => setWrongChain(chainId !== GENLAYER_CHAIN_ID));
-    return onWalletChainChanged((chainId) => setWrongChain(chainId !== GENLAYER_CHAIN_ID));
-  }, [walletAddress]);
 
   useEffect(() => {
     if (step !== 2 || agentReady) return;
@@ -190,6 +183,28 @@ function RedressPage() {
     }, 1600);
     return () => window.clearTimeout(timer);
   }, [agentReady, happyPath, intent, step]);
+
+  useEffect(() => {
+    async function refreshChain() {
+      try {
+        if (typeof window === "undefined" || !window.ethereum) {
+          setChainId(null);
+          return;
+        }
+        setChainId(await getChainId());
+      } catch {
+        setChainId(null);
+      }
+    }
+    void refreshChain();
+    const provider = typeof window !== "undefined" ? window.ethereum : undefined;
+    if (!provider) return;
+    const handler = () => void refreshChain();
+    provider.addEventListener?.("chainChanged", handler);
+    return () => {
+      provider.removeEventListener?.("chainChanged", handler);
+    };
+  }, [walletAddress]);
 
   function showError(caught: unknown) {
     const message =
@@ -354,6 +369,17 @@ function RedressPage() {
               <span className="animate-glow-pulse size-2 rounded-full bg-violet" />
               <span className="text-xs font-medium text-violet">GenLayer Studio Next</span>
             </div>
+            <a
+              className="inline-flex items-center gap-1.5 rounded-lg border border-teal/30 bg-teal/10 px-3 py-2 text-xs font-semibold text-teal hover:bg-teal/20"
+              href="https://studio-next.genlayer.com"
+              target="_blank"
+              rel="noreferrer"
+              title="Open Studio, click the droplet icon, paste your wallet address to get testnet GEN"
+            >
+              <Droplet className="size-3.5" />
+              <span className="hidden sm:inline">Get GEN tokens</span>
+              <span className="sm:hidden">GEN</span>
+            </a>
             {walletAddress ? (
               <div className="flex items-center gap-2">
                 <span className="hidden text-xs font-medium text-teal sm:inline">
@@ -384,17 +410,14 @@ function RedressPage() {
           </div>
         </header>
 
-        {walletAddress && wrongChain && (
-          <div
-            role="alert"
-            className="mt-6 flex items-start gap-3 rounded-xl border border-coral/50 bg-coral/10 px-4 py-3"
-          >
-            <CircleAlert className="mt-0.5 size-4 shrink-0 text-coral" />
-            <p className="text-sm text-coral">
-              <span className="font-semibold">Wrong network.</span> Your wallet is not on GenLayer
-              Studio Next (Chain ID {GENLAYER_CHAIN_ID}). Switch networks in your wallet before
-              submitting any transaction.
-            </p>
+        {wrongNetwork && (
+          <div className="mt-4 flex items-center gap-3 rounded-xl border border-coral/40 bg-coral/10 px-4 py-3 text-sm text-coral">
+            <CircleAlert className="size-5 shrink-0" />
+            <span>
+              Your wallet is on chain <span className="font-mono">{chainId}</span>, not GenLayer
+              Studio Next ( <span className="font-mono">{expectedChainId}</span>). Switch networks
+              in MetaMask before transacting.
+            </span>
           </div>
         )}
 
@@ -544,19 +567,6 @@ function RedressPage() {
             </Button>
             <p className="mt-2 text-center text-[11px] text-muted-foreground">
               MetaMask or a compatible wallet is required to write.
-            </p>
-            <p className="mt-2 text-center text-[11px] text-muted-foreground">
-              Need testnet GEN?{" "}
-              <a
-                href="https://studio-next.genlayer.com"
-                target="_blank"
-                rel="noreferrer"
-                className="font-medium text-teal underline-offset-2 hover:underline"
-              >
-                Get GEN tokens <ExternalLink className="inline size-3 align-[-1px]" />
-              </a>
-              {" — "}open Studio, click the droplet icon, paste your wallet address to get testnet
-              GEN.
             </p>
           </section>
 
