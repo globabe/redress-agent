@@ -786,13 +786,21 @@ function RedressPage() {
               </p>
             </div>
             <Button
-              onClick={() => restart(true)}
+              onClick={() => void handleMatchingRun()}
+              disabled={busy !== null}
               variant="outline"
               className="mt-4 h-11 w-full rounded-xl border-emerald/50 bg-emerald/10 text-emerald shadow-none hover:bg-emerald/20 hover:text-emerald"
             >
               <RefreshCcw />
-              Try again with a matching purchase
+              {busy === "mandate"
+                ? "Creating matching mandate..."
+                : busy === "purchase"
+                  ? "Recording matching purchase..."
+                  : "Try again with a matching purchase"}
             </Button>
+            <p className="mt-2 text-center text-[11px] text-muted-foreground">
+              Approve two wallet prompts, then adjudicate on Step 3.
+            </p>
           </section>
         </main>
 
