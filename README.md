@@ -57,7 +57,7 @@ Deployed on GenLayer Studio Next (Consensus v0.6 RC, Chain ID 61997):
 0x06a7Aaf8D575D5dC121bd0B185e2657fbB33d0c4
 ```
 
-View on explorer: https://explorer-studio-next.genlayer.com/address/0x06a7Aaf8D575D5dC121bd0B185e2657fbB33d0c4
+View on explorer: https://explorer-studio-dev.genlayer.com/address/0x06a7Aaf8D575D5dC121bd0B185e2657fbB33d0c4
 
 ### Methods
 
