@@ -89,6 +89,14 @@ subscribing to services, managing recurring payments. The long-term goal is
 a developer API so any agent platform can integrate this accountability
 layer without building it themselves.
 
+Two specific next steps to make Redress fully load-bearing, not just a
+judgment layer:
+- **Verifiable evidence** — move from client-side purchase simulation to
+  cryptographically signed merchant receipts or agent logs, so a verdict
+  is backed by proof, not just a submitted claim.
+- **Real settlement** — back verdicts with actual escrowed funds, so a
+  BREACH verdict doesn't just state a remedy, it executes it.
+
 ## Built for
 
 GenLayer Agent Tank Hackathon — Onchain Justice track.
