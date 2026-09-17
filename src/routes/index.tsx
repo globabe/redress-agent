@@ -286,6 +286,22 @@ function Roadmap() {
           Redress is designed to extend to these cases, and eventually to offer a developer API so
           any agent platform can integrate accountability without building it themselves.
         </p>
+        <ul className="mt-6 max-w-3xl space-y-3">
+          <li className="flex items-start gap-3 text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <span className="mt-2 size-1.5 shrink-0 rounded-full bg-teal" aria-hidden="true" />
+            <span>
+              Verifiable evidence — moving from simulated purchases to cryptographically signed
+              merchant receipts or agent logs
+            </span>
+          </li>
+          <li className="flex items-start gap-3 text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <span className="mt-2 size-1.5 shrink-0 rounded-full bg-teal" aria-hidden="true" />
+            <span>
+              Real settlement — backing verdicts with actual escrowed funds, so a breach verdict
+              executes the remedy, not just states it
+            </span>
+          </li>
+        </ul>
       </div>
     </section>
   );
