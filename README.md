@@ -94,8 +94,16 @@ judgment layer:
 - **Verifiable evidence** — move from client-side purchase simulation to
   cryptographically signed merchant receipts or agent logs, so a verdict
   is backed by proof, not just a submitted claim.
-- **Real settlement** — back verdicts with actual escrowed funds, so a
-  BREACH verdict doesn't just state a remedy, it executes it.
+
+Escrow-backed version
+
+A follow-up contract, redress_contract_escrow.py, extends the core logic with real fund settlement — create_mandate becomes payable, and adjudicate automatically releases or refunds escrow based on the verdict. Built in response to reviewer feedback. 
+**Live demo:** https://redressagent.app/demo-escrow
+
+Contract: 0x83d50E8B3DF9a949329BAe4Fd570917D65b403F1.
+
+View on explorer: https://explorer-studio-dev.genlayer.com/address/0x83d50E8B3DF9a949329BAe4Fd570917D65b403F1
+
 
 ## Built for
 
