@@ -78,7 +78,7 @@ function Header() {
           </Link>
           <Link
             to="/demo-escrow"
-            className="hidden text-sm font-medium text-muted-foreground hover:text-teal sm:inline"
+            className="hidden text-sm font-medium text-muted-foreground hover:text-gold sm:inline"
           >
             Escrow demo
           </Link>
@@ -88,6 +88,15 @@ function Header() {
           >
             <Link to="/demo">
               Try the live demo
+              <ArrowRight className="size-4" />
+            </Link>
+          </Button>
+          <Button
+            asChild
+            className="hidden h-9 rounded-lg bg-gold px-3 text-xs font-semibold text-ink shadow-none hover:bg-gold/90 sm:inline-flex sm:px-4 sm:text-sm"
+          >
+            <Link to="/demo-escrow">
+              Try the escrow demo
               <ArrowRight className="size-4" />
             </Link>
           </Button>
@@ -132,8 +141,7 @@ function Hero() {
           </Button>
           <Button
             asChild
-            variant="outline"
-            className="h-12 rounded-xl border-border/70 bg-ink/60 px-6 text-sm font-medium text-foreground shadow-none hover:bg-ink-2/70 hover:text-foreground"
+            className="h-12 rounded-xl bg-gold px-6 text-sm font-semibold text-ink shadow-none hover:bg-gold/90"
           >
             <Link to="/demo-escrow">
               Try the escrow demo
