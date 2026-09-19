@@ -172,7 +172,9 @@ function EscrowDemoPage() {
   const [agentReady, setAgentReady] = useState(false);
   const [purchase, setPurchase] = useState<Purchase | null>(null);
   const [verdict, setVerdict] = useState<Verdict | null>(null);
-  const [settlement, setSettlement] = useState<{ fulfilled: boolean; message: string } | null>(null);
+  const [settlement, setSettlement] = useState<{ fulfilled: boolean; message: string } | null>(
+    null,
+  );
   const [walletAddress, setWalletAddress] = useState("");
   const [chainId, setChainId] = useState<number | null>(null);
   const [busy, setBusy] = useState<"mandate" | "purchase" | "adjudicate" | "wallet" | null>(null);
