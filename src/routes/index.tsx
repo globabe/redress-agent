@@ -76,6 +76,12 @@ function Header() {
           >
             Demo
           </Link>
+          <Link
+            to="/demo-escrow"
+            className="hidden text-sm font-medium text-muted-foreground hover:text-teal sm:inline"
+          >
+            Escrow demo
+          </Link>
           <Button
             asChild
             className="h-9 rounded-lg bg-teal px-3 text-xs font-semibold text-ink shadow-none hover:bg-teal/90 sm:px-4 sm:text-sm"
@@ -304,13 +310,6 @@ function Roadmap() {
               merchant receipts or agent logs
             </span>
           </li>
-          <li className="flex items-start gap-3 text-base leading-relaxed text-muted-foreground sm:text-lg">
-            <span className="mt-2 size-1.5 shrink-0 rounded-full bg-teal" aria-hidden="true" />
-            <span>
-              Real settlement — backing verdicts with actual escrowed funds, so a breach verdict
-              executes the remedy, not just states it
-            </span>
-          </li>
         </ul>
       </div>
     </section>
@@ -334,6 +333,12 @@ function Footer() {
               Contract:{" "}
               <span className="font-mono text-foreground/70">
                 0x06a7Aaf8D575D5dC121bd0B185e2657fbB33d0c4
+              </span>
+            </span>
+            <span>
+              Escrow contract:{" "}
+              <span className="font-mono text-foreground/70">
+                0x83d50E8B3DF9a949329BAe4Fd570917D65b403F1
               </span>
             </span>
             <a
