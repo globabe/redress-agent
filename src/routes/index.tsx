@@ -78,9 +78,9 @@ function Header() {
           </Link>
           <Link
             to="/demo-escrow"
-            className="hidden text-sm font-medium text-muted-foreground hover:text-gold sm:inline"
+            className="hidden items-center gap-1.5 rounded-lg border border-gold/50 bg-gold/10 px-3 py-1.5 text-sm font-semibold text-gold transition-colors hover:bg-gold/20 sm:inline-flex"
           >
-            Escrow demo
+            Try the escrow demo
           </Link>
           <Button
             asChild
@@ -88,15 +88,6 @@ function Header() {
           >
             <Link to="/demo">
               Try the live demo
-              <ArrowRight className="size-4" />
-            </Link>
-          </Button>
-          <Button
-            asChild
-            className="hidden h-9 rounded-lg bg-gold px-3 text-xs font-semibold text-ink shadow-none hover:bg-gold/90 sm:inline-flex sm:px-4 sm:text-sm"
-          >
-            <Link to="/demo-escrow">
-              Try the escrow demo
               <ArrowRight className="size-4" />
             </Link>
           </Button>
