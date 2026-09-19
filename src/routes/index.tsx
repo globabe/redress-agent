@@ -129,6 +129,16 @@ function Hero() {
             variant="outline"
             className="h-12 rounded-xl border-border/70 bg-ink/60 px-6 text-sm font-medium text-foreground shadow-none hover:bg-ink-2/70 hover:text-foreground"
           >
+            <Link to="/demo-escrow">
+              Try the escrow demo
+              <ArrowRight className="size-4" />
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="h-12 rounded-xl border-border/70 bg-ink/60 px-6 text-sm font-medium text-foreground shadow-none hover:bg-ink-2/70 hover:text-foreground"
+          >
             <a href="https://github.com/globabe/redress-agent.git" target="_blank" rel="noreferrer">
               <Github className="size-4" />
               View on GitHub
